@@ -16,19 +16,40 @@ background = 'images/background.jpg'
 
 def create_pipe():
     pipe_gap = WINDOW_HEIGHT / 3
-    pipe_height = game_images['pipeimage'][0].get_height()
+    pipe_height = game_images['pipe'][0].get_height()
 
     # Random pipe height generation
     y2 = pipe_gap + random.randrange(0, int(WINDOW_HEIGHT - 1.2 * pipe_gap))
     pipe_x = WINDOW_WIDTH + 10
     y1 = pipe_height - y2 + pipe_gap
     pipe = [
-        # Upper pipe
+        # Top pipe
         {'x': pipe_x, 'y': -y1},
-        # Lower pipe
+        # Bottom pipe
         {'x': pipe_x, 'y': y2}
     ]
     return pipe
+
+def is_game_over(horizontal, vertical, top_pipes, bottom_pipes):
+
+    # Check if bird hits top or bottom
+    if vertical < 0 or vertical > elevation - 25:
+        return True
+    
+    # Check if bird hits top pipe
+    for pipe in top_pipes:
+        pipe_height = game_images['pipe'][0].get_height()
+        if vertical < pipe_height + pipe['y'] and \
+        abs(horizontal - pipe['x']) < game_images['pipe'][0].get_width():
+            return True
+    
+    # Check if bird hits bottom pipe
+    for pipe in bottom_pipes:
+        if (vertical + game_images['flappybird'].get_height() > pipe['y']) and \
+        abs(horizontal - pipe['x']) < game_images['pipe'][0].get_width():
+            return True
+    
+    return False
 if __name__ == "__main__":
 
     pygame.init()
