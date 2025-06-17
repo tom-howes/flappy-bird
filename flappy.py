@@ -40,3 +40,33 @@ if __name__ == "__main__":
     
     print("WELCOME TO TOM'S FLAPPY BIRD")
     print("Press space or enter to start the game")
+
+    while True:
+        
+        horizontal = int(WINDOW_WIDTH / 5)
+        vertical = int((WINDOW_HEIGHT - game_images['flappybird'].get_height()) / 2)
+
+        ground = 0
+        while True:
+            for event in pygame.event.get():
+
+                # Exit application on user pressing ESC or clicking X
+                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                    pygame.quit()
+
+                    sys.exit()
+
+                # Start game on user pressing SPACE or UP
+                elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                    pass
+
+                # Maintain starting image if no user action
+                else:
+                    window.blit(game_images['background'], (0, 0))
+                    window.blit(game_images['flappybird'], (horizontal, vertical))
+
+                    # Refreshes screen
+                    pygame.display.update()
+
+                    # Set framerate
+                    fps_clock.tick(fps)
