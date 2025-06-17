@@ -14,6 +14,21 @@ pipeimage = 'images/pipe.png'
 birdimage = 'images/bird.png'
 background = 'images/background.jpg'
 
+def create_pipe():
+    pipe_gap = WINDOW_HEIGHT / 3
+    pipe_height = game_images['pipeimage'][0].get_height()
+
+    # Random pipe height generation
+    y2 = pipe_gap + random.randrange(0, int(WINDOW_HEIGHT - 1.2 * pipe_gap))
+    pipe_x = WINDOW_WIDTH + 10
+    y1 = pipe_height - y2 + pipe_gap
+    pipe = [
+        # Upper pipe
+        {'x': pipe_x, 'y': -y1},
+        # Lower pipe
+        {'x': pipe_x, 'y': y2}
+    ]
+    return pipe
 if __name__ == "__main__":
 
     pygame.init()
