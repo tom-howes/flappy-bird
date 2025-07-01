@@ -19,8 +19,9 @@ Encountering bugs with pipe placement and the game randomly triggering is_game_o
 
 Refactored the pipe dictionaries to simplify them and ensure that pipes were being generated correctly (without random element). As of now, one pipe is generated initially and once that reaches the end of the screen another set of pipes of the same dimensions is generated. Pipe creation and score tracking work as intended.
 
+Collisions fixed, bottom pipe is simply pipe['y'], top pipe is pipe['y'] + pipe_height, to reflect that the pipe is blitted from pipe['y'] down.
+
 Next steps:
-     - Test and debug collisions
      - Add random element to pipe generation
      - Investigate how to improve visual of pipes (attached to top and bottom of screen)
      - Add animations to bird (flapping wings, tilt up/down)
