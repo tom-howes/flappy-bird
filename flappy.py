@@ -10,7 +10,7 @@ window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 elevation = WINDOW_HEIGHT
 game_images = {}
 fps = 32
-pipe_image = 'images/new_pipe.png'
+pipe_image = 'images/new_pipe_bigger.png'
 birdimage = 'images/bird2.png'
 background = 'images/background.jpg'
 
@@ -19,9 +19,9 @@ def create_pipe():
     pipe_height = game_images['pipe'][0].get_height()
 
     # Random pipe height generation
-    y2 = 100 # + random.randrange(0, int(WINDOW_HEIGHT - 1.2 * pipe_gap))
+    y2 = -50 # + random.randrange(0, int(WINDOW_HEIGHT - 1.2 * pipe_gap))
     pipe_x = WINDOW_WIDTH + 10
-    y1 = 400
+    y1 = 300
     pipe = [
         # Bottom pipe
         {'x': pipe_x, 'y': y1},
@@ -34,26 +34,24 @@ def is_game_over(horizontal, vertical, top_pipes, bottom_pipes):
     # Check if bird hits high or low
     if vertical < 0 or vertical > WINDOW_HEIGHT - 25:
         return True
-    # print("first_pipe: height ", game_images['pipe'][0].get_height(), " width ", game_images['pipe'][0].get_width())
     pipe_height = game_images['pipe'][0].get_height()
+    pipe_width = game_images['pipe'][0].get_width()
     # Check if bird hits high pipe
     for pipe in top_pipes:
         print("high pipe: ", "x: ", pipe['x'], "y: ", pipe['y'])
         
-        if vertical < pipe['y'] and \
-        pipe['x']< horizontal < pipe['x'] + pipe_height:
-            print("high pipe hit at:", horizontal, vertical)
+        if vertical < pipe['y'] + pipe_height and \
+        pipe['x'] + 3 < horizontal < pipe['x'] + pipe_width - 3:
+            print("top hit at:", horizontal, vertical)
             print(pipe['x'], pipe['y'])
-            print("hit high pipe")
             return True
     
     # Check if bird hits high pipe
     for pipe in bottom_pipes:
         # print("low pipe: ", "x: ", pipe['x'], "y: ", pipe['y'])
         if (vertical > pipe['y']) and \
-        pipe['x'] < horizontal < pipe['x'] + pipe_height:
-            print("low pipe hit at:", horizontal, vertical, end=" ")
-            print("hit low pipe")
+        pipe['x'] + 3 < horizontal < pipe['x'] + pipe_width - 3:
+            print("low pipe hit at:", horizontal, vertical)
             return True
     
     return False
