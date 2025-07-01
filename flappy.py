@@ -10,7 +10,7 @@ window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 elevation = WINDOW_HEIGHT
 game_images = {}
 fps = 32
-pipeimage = 'images/pipe.png'
+pipe_image = 'images/new_pipe.png'
 birdimage = 'images/bird2.png'
 background = 'images/background.jpg'
 
@@ -19,36 +19,41 @@ def create_pipe():
     pipe_height = game_images['pipe'][0].get_height()
 
     # Random pipe height generation
-    y2 = pipe_gap  # + random.randrange(0, int(WINDOW_HEIGHT - 1.2 * pipe_gap))
+    y2 = 100 # + random.randrange(0, int(WINDOW_HEIGHT - 1.2 * pipe_gap))
     pipe_x = WINDOW_WIDTH + 10
-    y1 = pipe_height - 2 * y2
-    print(pipe_height)
+    y1 = 400
     pipe = [
-        # Top pipe
-        {'x': pipe_x, 'y': -y1},
         # Bottom pipe
+        {'x': pipe_x, 'y': y1},
+        # Top pipe
         {'x': pipe_x, 'y': y2}
     ]
     return pipe
 
 def is_game_over(horizontal, vertical, top_pipes, bottom_pipes):
-
-    # Check if bird hits top or bottom
+    # Check if bird hits high or low
     if vertical < 0 or vertical > WINDOW_HEIGHT - 25:
         return True
-    
-    # Check if bird hits bottom pipe
-    print(bottom_pipes)
+    # print("first_pipe: height ", game_images['pipe'][0].get_height(), " width ", game_images['pipe'][0].get_width())
+    pipe_height = game_images['pipe'][0].get_height()
+    # Check if bird hits high pipe
     for pipe in top_pipes:
-        pipe_height = game_images['pipe'][0].get_height()
-        if vertical < pipe_height + pipe['y'] and \
-        abs(horizontal - pipe['x']) < game_images['pipe'][0].get_width():
+        print("high pipe: ", "x: ", pipe['x'], "y: ", pipe['y'])
+        
+        if vertical < pipe['y'] and \
+        pipe['x']< horizontal < pipe['x'] + pipe_height:
+            print("high pipe hit at:", horizontal, vertical)
+            print(pipe['x'], pipe['y'])
+            print("hit high pipe")
             return True
     
-    # Check if bird hits top pipe
+    # Check if bird hits high pipe
     for pipe in bottom_pipes:
-        if (vertical + game_images['flappybird'].get_height() > pipe['y']) and \
-        abs(horizontal - pipe['x']) < game_images['pipe'][0].get_width():
+        # print("low pipe: ", "x: ", pipe['x'], "y: ", pipe['y'])
+        if (vertical > pipe['y']) and \
+        pipe['x'] < horizontal < pipe['x'] + pipe_height:
+            print("low pipe hit at:", horizontal, vertical, end=" ")
+            print("hit low pipe")
             return True
     
     return False
@@ -61,22 +66,18 @@ def flappygame():
 
     # Generate two pipes
     first_pipe = create_pipe()
-    second_pipe = create_pipe()
+    print("first: ", first_pipe)
 
-    # List of top pipes (pipes facing down)
-    top_pipes = [
-        {'x' : WINDOW_WIDTH + 300 - temp_height,
-         'y' : first_pipe[0]['y']},
-         {'x' : WINDOW_WIDTH + 300 - temp_height + (WINDOW_WIDTH/2),
-          'y' : second_pipe[1]['y']}
+    # List of bottom pipes
+    bottom_pipes = [
+        {'x' : first_pipe[0]['x'],
+         'y' : first_pipe[0]['y']}
     ]
 
-    # List of bottom pipes (pipes facing up)
-    bottom_pipes = [
-        {'x' : WINDOW_WIDTH + 300 - temp_height,
-         'y' : first_pipe[0]['y']},
-         {'x' : WINDOW_WIDTH + 300 - temp_height + (WINDOW_WIDTH / 2),
-          'y' : second_pipe[1]['y']}
+    # List of top pipes
+    top_pipes = [
+        {'x' : first_pipe[1]['x'],
+          'y' : first_pipe[1]['y']}
     ]
 
     pipe_vel_x = -4 # pipe velocity along x axis
@@ -126,28 +127,33 @@ def flappygame():
         vertical = vertical + min(bird_velocity_y, vertical - player_height)
 
         # Move pipes to the left
-        for bottom_pipe, top_pipe in zip(bottom_pipes, top_pipes):
-            bottom_pipe['x'] += pipe_vel_x
+        for top_pipe, bottom_pipe in zip(top_pipes, bottom_pipes):
             top_pipe['x'] += pipe_vel_x
+            bottom_pipe['x'] += pipe_vel_x
         
         # Add new pipe when first is about to hit the left side of the window
         if 0 < bottom_pipes[0]['x'] < 5:
-            new_pipe = create_pipe()
-            bottom_pipes.append(new_pipe[0])
-            top_pipes.append(new_pipe[1])
+            new_pipe = create_pipe() 
+            bottom_pipe = {'x' : new_pipe[0]['x'],
+                            'y' : new_pipe[0]['y']}
+            bottom_pipes.append(bottom_pipe)
+            
+            top_pipe = {'x' : new_pipe[1]['x'],
+                        'y' : new_pipe[1]['y']}
+            top_pipes.append(top_pipe)
 
         # Remove pipe if its off the screen
 
         if bottom_pipes[0]['x'] < -game_images['pipe'][0].get_width():
-            top_pipes.pop(0)
             bottom_pipes.pop(0)
+            top_pipes.pop(0)
         
         # blit game images
 
         window.blit(game_images['background'], (0, 0))
-        for bottom_pipe, top_pipe in zip(bottom_pipes, top_pipes):
-            window.blit(game_images['pipe'][0], (bottom_pipe['x'], bottom_pipe['y']))
-            window.blit(game_images['pipe'][1], (top_pipe['x'], top_pipe['y']))
+        for top_pipe, bottom_pipe in zip(top_pipes, bottom_pipes):
+            window.blit(game_images['pipe'][0], (top_pipe['x'], top_pipe['y']))
+            window.blit(game_images['pipe'][1], (bottom_pipe['x'], bottom_pipe['y']))
         
         window.blit(game_images['flappybird'], (horizontal, vertical))
 
@@ -194,8 +200,8 @@ if __name__ == "__main__":
     )
     game_images['flappybird'] = pygame.image.load(birdimage).convert_alpha()
     game_images['background'] = pygame.image.load(background).convert_alpha()
-    game_images['pipe'] = (pygame.transform.rotate(pygame.image.load(pipeimage).convert_alpha(), 180),
-                           pygame.image.load(pipeimage).convert_alpha())
+    game_images['pipe'] = (pygame.transform.rotate(pygame.image.load(pipe_image).convert_alpha(), 180),
+                           pygame.image.load(pipe_image).convert_alpha())
     
     print("WELCOME TO TOM'S FLAPPY BIRD")
     print("Press space or enter to start the game")
