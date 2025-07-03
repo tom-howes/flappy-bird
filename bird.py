@@ -4,15 +4,18 @@ birdimage = 'images/bird2.png'
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self, horizontal, vertical):
-        
+
         super().__init__()
-        self.image = birdimage
+        self.image = pygame.image.load(birdimage)
         self.mask = pygame.mask.from_surface(self.image)
 
         self.x = horizontal
         self.y = vertical
         self.velocity = 0
         self.height = self.y
+    
+    def draw(self, window):
+        window.blit(self.image, (self.x, self.y))
     
     def flap(self):
 
