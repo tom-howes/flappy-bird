@@ -1,6 +1,6 @@
 import pygame
 
-birdimage = 'images/bird2.png'
+birdimage = 'images/bird3.png'
 MAX_VELOCITY = 5
 class Bird(pygame.sprite.Sprite):
     def __init__(self, horizontal, vertical):
@@ -33,3 +33,9 @@ class Bird(pygame.sprite.Sprite):
     def get_mask(self):
 
         return pygame.mask.from_surface(self.image)
+    
+    def check_bounds(self, height):
+        if self.y < 0 or self.y > height:
+            return True
+        
+        return False

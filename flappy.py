@@ -124,7 +124,9 @@ def flappygame():
             
             for r in remove:
                 pipes.remove(r)
-            
+        
+        if bird.check_bounds(WINDOW_HEIGHT):
+            return            
         
         draw_game_state(bird, pipes, score) 
 
