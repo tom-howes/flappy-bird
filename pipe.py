@@ -37,8 +37,8 @@ class Pipe():
     def collision(self, bird, window):
 
         bird_mask = bird.get_mask()
-        top_mask = pygame.mask_from_surface(self.top_pipe)
-        bottom_mask = pygame.mask_from_surface(self.bottom_pipe)
+        top_mask = pygame.mask.from_surface(self.top_pipe)
+        bottom_mask = pygame.mask.from_surface(self.bottom_pipe)
 
         top_offset = (self.x - bird.x, self.top - bird.y)
         bottom_offset = (self.x - bird.x, self.bottom - bird.y)
@@ -50,3 +50,6 @@ class Pipe():
             return True
         
         return False
+    
+    def print_pos(self):
+        print("x: ", self.x, "y: ", self.height)

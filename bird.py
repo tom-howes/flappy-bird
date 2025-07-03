@@ -1,7 +1,7 @@
 import pygame
 
 birdimage = 'images/bird2.png'
-
+MAX_VELOCITY = 5
 class Bird(pygame.sprite.Sprite):
     def __init__(self, horizontal, vertical):
 
@@ -11,8 +11,9 @@ class Bird(pygame.sprite.Sprite):
 
         self.x = horizontal
         self.y = vertical
-        self.velocity = 0
+        self.velocity = MAX_VELOCITY
         self.height = self.y
+        self.flapped = False
     
     def draw(self, window):
         window.blit(self.image, (self.x, self.y))
@@ -23,8 +24,11 @@ class Bird(pygame.sprite.Sprite):
         self.height = self.y
     
     def move(self):
-
         self.y = self.y + self.velocity
+        if self.velocity <= MAX_VELOCITY:
+            self.velocity += 1.5
+        else:
+            self.velocity = MAX_VELOCITY
 
     def get_mask(self):
 
