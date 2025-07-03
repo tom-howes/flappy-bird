@@ -1,31 +1,30 @@
 import pygame
 import random
 
-gap = 200
+MAX_HEIGHT = 100
 velocity = 5
+WINDOW_HEIGHT = 499
 
 class Pipe():
 
     def __init__(self, x):
         self.x = x
-        self.height = 0
 
         self.top = 0
-        self.bottom = 0
         pipe_image = pygame.image.load("images/new_pipe_biggest.png").convert_alpha()
         
         self.top_pipe = pygame.transform.flip(pipe_image, False, True)
         self.bottom_pipe = pipe_image
+
+        self.bottom = WINDOW_HEIGHT - pipe_image.get_height()
 
         self.passed = False
 
         self.random_height()
 
     def random_height(self):
-
-        self.height = random.randrange(50, 450)
-        self.top = self.height - self.top_pipe.get_height()
-        self.bottom = self.height + gap
+        self.top -= random.randrange(0, MAX_HEIGHT)
+        self.bottom += random.randrange(0, MAX_HEIGHT)
         
     def move(self):
         self.x -= velocity
@@ -52,4 +51,4 @@ class Pipe():
         return False
     
     def print_pos(self):
-        print("x: ", self.x, "y: ", self.height)
+        print("x: ", self.x)

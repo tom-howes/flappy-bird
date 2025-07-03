@@ -65,6 +65,28 @@ score_images = [pygame.image.load('images/0.jpg').convert_alpha(),
     
 #     return False
 
+def draw_game_state(bird, pipes, score):
+    window.blit(background, (0, 0))
+    for pipe in pipes:
+        pipe.draw(window)
+    
+    bird.draw(window)
+
+    # Fetching digits of score
+    numbers = [int(x) for x in list(str(score))]
+    width = 0
+
+    # Finding width of score images from numbers
+    for num in numbers:
+        width += score_images[num].get_width()
+    
+    x_offset = (WINDOW_WIDTH - width)/1.1
+
+    # Blitting images on the window
+    for num in numbers:
+        window.blit(score_images[num], (x_offset, WINDOW_WIDTH * 0.02))
+        x_offset += score_images[num].get_width()
+
 def flappygame():
     score = 0
     horizontal = int(WINDOW_HEIGHT/5)
@@ -86,16 +108,13 @@ def flappygame():
         
         remove = []
 
-        window.blit(background, (0, 0))
-
         for pipe in pipes:
-            pipe.draw(window)
             pipe.move()
             pipe.print_pos()
             if pipe.collision(bird, window):
                 print("game over!")
                 return
-            if pipe.x + pipe.top_pipe.get_width() < 0:
+            if pipe.x + pipe.top_pipe.get_width() < 5:
                 remove.append(pipe)
             
             if not pipe.passed and pipe.x < bird.x:
@@ -105,23 +124,10 @@ def flappygame():
             
             for r in remove:
                 pipes.remove(r)
+            
         
-        bird.draw(window)
+        draw_game_state(bird, pipes, score) 
 
-        # Fetching digits of score
-        numbers = [int(x) for x in list(str(score))]
-        width = 0
-
-        # Finding width of score images from numbers
-        for num in numbers:
-            width += score_images[num].get_width()
-        
-        x_offset = (WINDOW_WIDTH - width)/1.1
-
-        # Blitting images on the window
-        for num in numbers:
-            window.blit(score_images[num], (x_offset, WINDOW_WIDTH * 0.02))
-            x_offset += score_images[num].get_width()
         
         # Refreshing game window and displaying the score
         pygame.display.update()
