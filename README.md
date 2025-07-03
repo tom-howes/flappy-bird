@@ -21,11 +21,12 @@ Refactored the pipe dictionaries to simplify them and ensure that pipes were bei
 
 Collisions fixed, bottom pipe is simply pipe['y'], top pipe is pipe['y'] + pipe_height, to reflect that the pipe is blitted from pipe['y'] down. -3 added at the moment to account for the slight border around the png.
 
-Looking to swap to OOP to have birds and pipes as their own classes.
+Swapped to Object-Oriented approach, giving birds and pipes their own classes.
+
+Investigated pygame's masks feature to enable more accurate collisions between pipe and bird
 
 Next steps:
-     - Add random element to pipe generation
-     - Investigate how to improve visual of pipes (attached to top and bottom of screen)
      - Add animations to bird (flapping wings, tilt up/down)
-     - Add double digit scoring
      - Add incrementally increasing bird speed
+     - Add start and finish animations
+     - Add leaderboard and player stats etc.
