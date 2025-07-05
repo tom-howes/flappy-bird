@@ -23,7 +23,9 @@ Collisions fixed, bottom pipe is simply pipe['y'], top pipe is pipe['y'] + pipe_
 
 Swapped to Object-Oriented approach, giving birds and pipes their own classes.
 
-Investigated pygame's masks feature to enable more accurate collisions between pipe and bird
+Investigated pygame's masks feature to enable more accurate sprite collisions.
+
+Added if/else statements to cycle through bird images to display wings up or down based on velocity and player pressing flap (space/up)
 
 Next steps:
      - Add animations to bird (flapping wings, tilt up/down)
