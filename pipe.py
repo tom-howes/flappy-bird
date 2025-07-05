@@ -2,12 +2,12 @@ import pygame
 import random
 
 MAX_HEIGHT = 100
-velocity = 5
+START_VELOCITY = 5
 WINDOW_HEIGHT = 499
 
 class Pipe():
 
-    def __init__(self, x):
+    def __init__(self, x, score):
         self.x = x
 
         self.top = 0
@@ -17,6 +17,8 @@ class Pipe():
         self.bottom_pipe = pipe_image
 
         self.bottom = WINDOW_HEIGHT - pipe_image.get_height()
+        self.acceleration = (score // 5) * 0.5
+        self.velocity = START_VELOCITY + self.acceleration
 
         self.passed = False
 
@@ -25,9 +27,9 @@ class Pipe():
     def random_height(self):
         self.top -= random.randrange(0, MAX_HEIGHT)
         self.bottom += random.randrange(0, MAX_HEIGHT)
-        
+
     def move(self):
-        self.x -= velocity
+        self.x -= self.velocity
 
     def draw(self, window):
         window.blit(self.top_pipe, (self.x, self.top))

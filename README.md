@@ -27,8 +27,9 @@ Investigated pygame's masks feature to enable more accurate sprite collisions.
 
 Added if/else statements to cycle through bird images to display wings up or down based on velocity and player pressing flap (space/up)
 
+Added pipe acceleration based on incrementing score (0.5 per 5 score) to make the game harder as the player progresses
+
 Next steps:
      - Add animations to bird (flapping wings, tilt up/down)
-     - Add incrementally increasing bird speed
      - Add start and finish animations
      - Add leaderboard and player stats etc.

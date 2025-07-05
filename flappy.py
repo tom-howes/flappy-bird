@@ -92,7 +92,7 @@ def flappygame():
     horizontal = int(WINDOW_HEIGHT/5)
     vertical = int(WINDOW_WIDTH/2)
 
-    pipes = [Pipe(WINDOW_WIDTH)]
+    pipes = [Pipe(WINDOW_WIDTH, score)]
     bird = Bird(horizontal, vertical)
 
     while True:
@@ -120,10 +120,11 @@ def flappygame():
             if not pipe.passed and pipe.x < bird.x:
                 pipe.passed = True
                 score += 1
-                pipes.append(Pipe(WINDOW_WIDTH))
+                pipes.append(Pipe(WINDOW_WIDTH, score))
             
             for r in remove:
                 pipes.remove(r)
+            
         
         if bird.check_bounds(WINDOW_HEIGHT):
             return            
