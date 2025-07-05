@@ -1,12 +1,16 @@
 import pygame
 
-birdimage = 'images/bird3.png'
-MAX_VELOCITY = 5
+birdimages = [
+    'images/bird-dn.png',
+    'images/bird-up.png'
+]
+MAX_VELOCITY = 6
 class Bird(pygame.sprite.Sprite):
     def __init__(self, horizontal, vertical):
 
         super().__init__()
-        self.image = pygame.image.load(birdimage)
+        self.image = pygame.image.load(birdimages[1])
+        self.wings = 'up'
         self.mask = pygame.mask.from_surface(self.image)
 
         self.x = horizontal
@@ -15,23 +19,33 @@ class Bird(pygame.sprite.Sprite):
         self.height = self.y
         self.flapped = False
     
-    def draw(self, window):
+    def draw(self, window):  
+        self.image = self.get_image()
         window.blit(self.image, (self.x, self.y))
     
+    def get_image(self):
+        if self.flapped == True:
+            self.flapped = False
+            return pygame.image.load(birdimages[0])
+        elif self.flapped == False and self.velocity < 0:
+            return pygame.image.load(birdimages[0])
+        else:
+            return pygame.image.load(birdimages[1])
+            
+    
     def flap(self):
-
-        self.velocity = -10.5
+        self.velocity = -13
         self.height = self.y
+        self.flapped = True
     
     def move(self):
         self.y = self.y + self.velocity
         if self.velocity <= MAX_VELOCITY:
-            self.velocity += 1.5
+            self.velocity += 1.2
         else:
             self.velocity = MAX_VELOCITY
 
     def get_mask(self):
-
         return pygame.mask.from_surface(self.image)
     
     def check_bounds(self, height):
