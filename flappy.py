@@ -21,49 +21,18 @@ score_images = [pygame.image.load('images/0.jpg').convert_alpha(),
                 pygame.image.load('images/7.jpg').convert_alpha(),
                 pygame.image.load('images/8.jpg').convert_alpha(),
                 pygame.image.load('images/9.jpg').convert_alpha()]
+title = pygame.image.load('images/Title_text.png').convert_alpha()
+title_rect = title.get_rect()
+title_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 50)
+pygame.font.init()
+font = pygame.font.SysFont(None, 24)
+text = font.render('Press SPACE or UP to play!', True, 'WHITE')
+text_rect = text.get_rect()
+text_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 150)
+BLINK_EVENT = pygame.event.custom_type()
+pygame.time.set_timer(BLINK_EVENT, 500)
+show_text = True
 
-# def create_pipe():
-#     pipe_gap = WINDOW_HEIGHT / 3
-#     pipe_height = game_images['pipe'][0].get_height()
-
-#     # Random pipe height generation
-#     y2 = 0 # + random.randrange(0, int(WINDOW_HEIGHT - 1.2 * pipe_gap))
-#     pipe_x = WINDOW_WIDTH + 10
-#     y1 = WINDOW_HEIGHT - pipe_height
-#     pipe = [
-#         # Bottom pipe
-#         {'x': pipe_x, 'y': y1},
-#         # Top pipe
-#         {'x': pipe_x, 'y': y2}
-#     ]
-#     return pipe
-
-# def is_game_over(horizontal, vertical, top_pipes, bottom_pipes, bird):
-#     # Check if bird hits high or low
-#     if vertical < 0 or vertical > WINDOW_HEIGHT - 25:
-#         return True
-#     pipe_height = game_images['pipe'][0].get_height()
-#     pipe_width = game_images['pipe'][0].get_width()
-#     # Check if bird hits high pipe
-#     for pipe in top_pipes:
-#         print("high pipe: ", "x: ", pipe['x'], "y: ", pipe['y'], end=" ")
-#         print("horizontal: ", horizontal)
-        
-#         if vertical < pipe['y'] + pipe_height and \
-#         pipe['x'] + 10 < horizontal < pipe['x'] + pipe_width - 10:
-#             print("top hit at:", pipe['x'])
-#             print(pipe['x'], pipe['y'])
-#             return True
-    
-#     # Check if bird hits high pipe
-#     for pipe in bottom_pipes:
-#         # print("low pipe: ", "x: ", pipe['x'], "y: ", pipe['y'])
-#         pipe_mask = pygame.mask.from_surface(pipe_image)
-#         player_mask = pygame.mask.from_surface(birdimage)
-#         if pygame.sprite.collide_mask(bird, bird):
-#             print("bird collided")
-    
-#     return False
 
 def draw_game_state(bird, pipes, score):
     window.blit(background, (0, 0))
@@ -110,7 +79,6 @@ def flappygame():
 
         for pipe in pipes:
             pipe.move()
-            pipe.print_pos()
             if pipe.collision(bird, window):
                 print("game over!")
                 return
@@ -165,17 +133,20 @@ if __name__ == "__main__":
                     sys.exit()
 
                 # Start game on user pressing SPACE or UP
-                elif event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                     flappygame()
 
                 # Maintain starting image if no user action
-                else:
-                    window.blit(background, (0, 0))
-                    bird = Bird(horizontal, vertical)
-                    bird.draw(window)
+                if event.type == BLINK_EVENT:
+                    show_text = not show_text
 
-                    # Refreshes screen
-                    pygame.display.update()
+                window.blit(background, (0, 0))
+                window.blit(title, title_rect)
+                if show_text:
+                    window.blit(text, text_rect)
 
-                    # Set framerate
-                    fps_clock.tick(fps)
+                # Refreshes screen
+                pygame.display.update()
+
+                # Set framerate
+                fps_clock.tick(fps)

@@ -29,7 +29,9 @@ Added if/else statements to cycle through bird images to display wings up or dow
 
 Added pipe acceleration based on incrementing score (0.5 per 5 score) to make the game harder as the player progresses
 
+Added intro screen with title and blinking text to prompt user to start the game.
+
 Next steps:
      - Add animations to bird (flapping wings, tilt up/down)
-     - Add start and finish animations
+     - Add start (done) and finish animations
      - Add leaderboard and player stats etc.
