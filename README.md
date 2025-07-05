@@ -1,5 +1,5 @@
 # flappy-bird
-My take on the popular mobile game flappy bird
+My take on the popular game flappy bird
 
 Background - https://www.vectorstock.com/royalty-free-vector/cartoon-summer-beach-paradise-nature-vacation-vector-55093623
 
@@ -32,6 +32,6 @@ Added pipe acceleration based on incrementing score (0.5 per 5 score) to make th
 Added intro screen with title and blinking text to prompt user to start the game.
 
 Next steps:
-     - Add animations to bird (flapping wings, tilt up/down)
+     - Add animations to bird (flapping wings (done), tilt up/down)
      - Add start (done) and finish animations
      - Add leaderboard and player stats etc.
