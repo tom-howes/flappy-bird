@@ -37,9 +37,11 @@ Realised that User Interface class will be needed to create buttons and have the
 
 Added mechanism to write player name / score to leaderboard json file, testing now.
 
+If score is 0, not added - else check if it is higher than any scores on current leaderboard - if it is insert it, or the leaderboard is not full (cap. 5), add it to the end. slice the leaderboard to only store the top 5 scores.
+
 Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down, flop on death)
      - Add start (done) and finish animations
      - Explore ways to increase difficulty
-     - Add leaderboard and player stats etc.
+     - Add leaderboard (working with terminal input - not displaying yet) and player stats etc.
      - Implement UI class for buttons / user input etc.

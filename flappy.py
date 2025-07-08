@@ -8,7 +8,7 @@ from pipe import Pipe
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 499
 
-score_file = "scores/leaderboard.json"
+score_file = "scores/leaderboard_current.json"
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 elevation = WINDOW_HEIGHT
@@ -60,6 +60,8 @@ def draw_game_state(bird, pipes, score):
         x_offset += score_images[num].get_width()
 
 def flappygame():
+    leaderboard = Leaderboard(score_file)
+
     score = 0
     horizontal = int(WINDOW_HEIGHT/5)
     vertical = int(WINDOW_WIDTH/2)
@@ -82,23 +84,22 @@ def flappygame():
 
         for pipe in pipes:
             pipe.move()
-            if pipe.collision(bird, window):
+            if pipe.collision(bird, window) or bird.check_bounds(WINDOW_HEIGHT):
+                leaderboard.add_current_score(score)
+                leaderboard.update()
                 print("game over!")
                 return
             if pipe.x + pipe.top_pipe.get_width() < 5:
                 remove.append(pipe)
             
-            if not pipe.passed and pipe.x < bird.x:
+            if not pipe.passed and pipe.x + (pipe.top_pipe.get_width() / 2) < bird.x:
                 pipe.passed = True
                 score += 1
                 pipes.append(Pipe(WINDOW_WIDTH, score))
             
             for r in remove:
                 pipes.remove(r)
-            
-        
-        if bird.check_bounds(WINDOW_HEIGHT):
-            return            
+                 
         
         draw_game_state(bird, pipes, score) 
 
@@ -121,7 +122,7 @@ if __name__ == "__main__":
     print("Press space or enter to start the game")
 
     while True:
-        
+                
         horizontal = int(WINDOW_WIDTH / 5)
         vertical = int(WINDOW_HEIGHT / 2)
 
@@ -137,8 +138,6 @@ if __name__ == "__main__":
 
                 # Start game on user pressing SPACE or UP
                 if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                    leaderboard = Leaderboard(score_file)
-                    leaderboard.get_player()
                     flappygame()
 
                 # Maintain starting image if no user action
