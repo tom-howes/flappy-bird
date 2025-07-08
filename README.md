@@ -32,6 +32,7 @@ Added pipe acceleration based on incrementing score (0.5 per 5 score) to make th
 Added intro screen with title and blinking text to prompt user to start the game.
 
 Next steps:
-     - Add animations to bird (flapping wings (done), tilt up/down)
+     - Add animations to bird (flapping wings (done), tilt up/down, flop on death)
      - Add start (done) and finish animations
+     - Explore ways to increase difficulty
      - Add leaderboard and player stats etc.

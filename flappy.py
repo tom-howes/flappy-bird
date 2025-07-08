@@ -1,11 +1,14 @@
 import random
 import sys
 import pygame
+import score
 from pygame.locals import *
 from bird import Bird
 from pipe import Pipe
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 499
+
+score_file = "scores/leaderboard.json"
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 elevation = WINDOW_HEIGHT
