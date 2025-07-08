@@ -1,7 +1,7 @@
 import random
 import sys
 import pygame
-import score
+from leaderboard import Leaderboard
 from pygame.locals import *
 from bird import Bird
 from pipe import Pipe
@@ -137,6 +137,8 @@ if __name__ == "__main__":
 
                 # Start game on user pressing SPACE or UP
                 if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                    leaderboard = Leaderboard(score_file)
+                    leaderboard.get_player()
                     flappygame()
 
                 # Maintain starting image if no user action

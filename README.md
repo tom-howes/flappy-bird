@@ -31,8 +31,15 @@ Added pipe acceleration based on incrementing score (0.5 per 5 score) to make th
 
 Added intro screen with title and blinking text to prompt user to start the game.
 
+Working on implementing a leaderboard. Using json files and parsing with Python's inbuilt library. Score class will handle retrieving and updating leaderboard - looking to work with a template (blank) leaderboard and a current (up-to-date) leaderboard.
+
+Realised that User Interface class will be needed to create buttons and have the user enter their name, refresh the leaderboard etc. - For testing purposes will initially handle in the terminal.
+
+Added mechanism to write player name / score to leaderboard json file, testing now.
+
 Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down, flop on death)
      - Add start (done) and finish animations
      - Explore ways to increase difficulty
      - Add leaderboard and player stats etc.
+     - Implement UI class for buttons / user input etc.
