@@ -31,10 +31,14 @@ pygame.font.init()
 font = pygame.font.SysFont(None, 24)
 text = font.render('Press SPACE or UP to play!', True, 'WHITE')
 text_rect = text.get_rect()
-text_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 150)
+text_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 190)
 BLINK_EVENT = pygame.event.custom_type()
 pygame.time.set_timer(BLINK_EVENT, 500)
 show_text = True
+
+player_name = ''
+input_rect = pygame.Rect(WINDOW_WIDTH / 2 - 70, WINDOW_HEIGHT / 2 + 120, 140, 32)
+color = pygame.Color('White')
 
 
 def draw_game_state(bird, pipes, score):
@@ -59,9 +63,8 @@ def draw_game_state(bird, pipes, score):
         window.blit(score_images[num], (x_offset, WINDOW_WIDTH * 0.02))
         x_offset += score_images[num].get_width()
 
-def flappygame():
-    leaderboard = Leaderboard(score_file)
-
+def flappygame(player_name):
+    leaderboard = Leaderboard(score_file, player_name)
     score = 0
     horizontal = int(WINDOW_HEIGHT/5)
     vertical = int(WINDOW_WIDTH/2)
@@ -133,21 +136,32 @@ if __name__ == "__main__":
                 # Exit application on user pressing ESC or clicking X
                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                     pygame.quit()
-
                     sys.exit()
 
                 # Start game on user pressing SPACE or UP
                 if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                    flappygame()
+                    flappygame(player_name)
 
                 # Maintain starting image if no user action
                 if event.type == BLINK_EVENT:
                     show_text = not show_text
+                
+                if event.type == KEYDOWN and (event.key != K_SPACE and event.key != K_UP):
+                    if event.unicode.isalnum():
+                        player_name += event.unicode
+                
+                if event.type == KEYDOWN and (event.key == K_BACKSPACE):
+                    player_name = player_name[:-1]
 
                 window.blit(background, (0, 0))
                 window.blit(title, title_rect)
                 if show_text:
                     window.blit(text, text_rect)
+
+                pygame.draw.rect(window, color, input_rect, 2)
+                
+                text_surface = font.render(player_name, True, (255, 255, 255))
+                window.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
 
                 # Refreshes screen
                 pygame.display.update()

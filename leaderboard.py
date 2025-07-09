@@ -4,8 +4,8 @@ score_file = "scores/leaderboard_current.json"
 
 class Leaderboard():
     
-    def __init__(self, score_file):
-        self.player = self.get_player()
+    def __init__(self, score_file, player_name):
+        self.player = player_name
         self.leaderboard = self.get_leaderboard(score_file)
     
     # Prompts the user to input their name
