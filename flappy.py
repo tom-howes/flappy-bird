@@ -37,8 +37,10 @@ pygame.time.set_timer(BLINK_EVENT, 500)
 show_text = True
 
 player_name = ''
+enter_name = 'Enter Name...'
 input_rect = pygame.Rect(WINDOW_WIDTH / 2 - 70, WINDOW_HEIGHT / 2 + 120, 140, 32)
-color = pygame.Color('White')
+colour = pygame.Color('White')
+name_colour = pygame.Color('White')
 
 
 def draw_game_state(bird, pipes, score):
@@ -140,14 +142,17 @@ if __name__ == "__main__":
 
                 # Start game on user pressing SPACE or UP
                 if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                    flappygame(player_name)
+                    if player_name != "":
+                        flappygame(player_name)
+                    else:
+                        name_colour = (255, 0, 0)
 
                 # Maintain starting image if no user action
                 if event.type == BLINK_EVENT:
                     show_text = not show_text
                 
                 if event.type == KEYDOWN and (event.key != K_SPACE and event.key != K_UP):
-                    if event.unicode.isalnum():
+                    if event.unicode.isalnum() and len(player_name) < 9:
                         player_name += event.unicode
                 
                 if event.type == KEYDOWN and (event.key == K_BACKSPACE):
@@ -158,10 +163,15 @@ if __name__ == "__main__":
                 if show_text:
                     window.blit(text, text_rect)
 
-                pygame.draw.rect(window, color, input_rect, 2)
+                pygame.draw.rect(window, colour, input_rect, 2)
                 
                 text_surface = font.render(player_name, True, (255, 255, 255))
+                name_surface = font.render(enter_name, True, name_colour)
+                name_surface.set_alpha(128)
                 window.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
+
+                if player_name == "":
+                    window.blit(name_surface, (input_rect.x + 5, input_rect.y + 5))
 
                 # Refreshes screen
                 pygame.display.update()

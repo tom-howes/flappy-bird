@@ -41,6 +41,8 @@ If score is 0, not added - else check if it is higher than any scores on current
 
 Need to create current leaderboard from template if it doesn't exist
 
+Updated name text box to prompt user to enter input, restrict name length and prevent user starting game without a name.
+
 Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down, flop on death)
      - Add start (done) and finish animations
