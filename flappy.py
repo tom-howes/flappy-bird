@@ -43,11 +43,15 @@ enter_name = 'Enter Name...'
 input_rect = pygame.Rect(WINDOW_WIDTH / 2 - 70, WINDOW_HEIGHT / 2 + 120, 140, 32)
 colour = pygame.Color('White')
 name_colour = pygame.Color('White')
+ldb_button = pygame.image.load("images/ldb-button.png").convert_alpha()
+ldb_button_rect = ldb_button.get_rect()
 
 # Leaderboard initialization
 leaderboard_frame = pygame.image.load("images/test.png")
 leaderboard_rect = leaderboard_frame.get_rect()
 leaderboard_rect.center = WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2
+back_button = pygame.image.load("images/back-button.png").convert_alpha()
+back_button_rect = back_button.get_rect()
 
 def draw_game_state(bird, pipes, score):
     window.blit(background, (0, 0))
@@ -71,6 +75,13 @@ def draw_game_state(bird, pipes, score):
         window.blit(score_images[num], (x_offset, WINDOW_WIDTH * 0.02))
         x_offset += score_images[num].get_width()
 
+def check_button_click(button_rect, x, y):
+    if button_rect.x < x < button_rect.x + ldb_button.get_width():
+        if button_rect.y < y < button_rect.y + ldb_button.get_height():
+            return True
+    
+    return False
+
 def draw_leaderboard(leaderboard):
     ldb = leaderboard.get_leaderboard()
     while True:
@@ -82,10 +93,13 @@ def draw_leaderboard(leaderboard):
                 return
             if event.type == MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
-                print(f"Mouse clicked at {x}, {y}")
+                if check_button_click(back_button_rect, x, y):
+                    return
+                
         
         window.blit(background, (0, 0))
         window.blit(leaderboard_frame, leaderboard_rect)
+        window.blit(back_button, back_button_rect)
         y = 143
         for player in ldb:
             x = 195
@@ -100,7 +114,6 @@ def draw_leaderboard(leaderboard):
         pygame.display.update()
 
         fps_clock.tick(fps)
-    print(ldb)
 
 def flappygame(player_name):
     leaderboard = Leaderboard(score_file, player_name)
@@ -189,8 +202,10 @@ if __name__ == "__main__":
                     show_text = not show_text
                 
                 if event.type == MOUSEBUTTONDOWN:
-                    leaderboard = Leaderboard(score_file, "")
-                    draw_leaderboard(leaderboard)
+                    x, y = pygame.mouse.get_pos()
+                    if check_button_click(ldb_button_rect, x, y):
+                        leaderboard = Leaderboard(score_file, "")
+                        draw_leaderboard(leaderboard)
                 
                 if event.type == KEYDOWN and (event.key != K_SPACE and event.key != K_UP):
                     if event.unicode.isalnum() and len(player_name) < 9:
@@ -199,8 +214,6 @@ if __name__ == "__main__":
                 if event.type == KEYDOWN and (event.key == K_BACKSPACE):
                     player_name = player_name[:-1]
                 
-                    
-                    
 
                 window.blit(background, (0, 0))
                 window.blit(title, title_rect)
@@ -214,8 +227,10 @@ if __name__ == "__main__":
                 name_surface.set_alpha(128)
                 window.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
 
+                window.blit(ldb_button, (0, 0))
+
                 if player_name == "":
-                    window.blit(name_surface, (input_rect.x + 5, input_rect.y + 5))
+                    window.blit(name_surface, (input_rect.x + 5, input_rect.y + 8))
 
                 # Refreshes screen
                 pygame.display.update()
