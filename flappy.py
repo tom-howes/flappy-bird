@@ -5,11 +5,13 @@ from leaderboard import Leaderboard
 from pygame.locals import *
 from bird import Bird
 from pipe import Pipe
+import time
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 499
 
 score_file = "scores/leaderboard_current.json"
 
+# Home screen initialization
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 elevation = WINDOW_HEIGHT
 fps = 32
@@ -42,6 +44,10 @@ input_rect = pygame.Rect(WINDOW_WIDTH / 2 - 70, WINDOW_HEIGHT / 2 + 120, 140, 32
 colour = pygame.Color('White')
 name_colour = pygame.Color('White')
 
+# Leaderboard initialization
+leaderboard_frame = pygame.image.load("images/test.png")
+leaderboard_rect = leaderboard_frame.get_rect()
+leaderboard_rect.center = WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2
 
 def draw_game_state(bird, pipes, score):
     window.blit(background, (0, 0))
@@ -64,6 +70,37 @@ def draw_game_state(bird, pipes, score):
     for num in numbers:
         window.blit(score_images[num], (x_offset, WINDOW_WIDTH * 0.02))
         x_offset += score_images[num].get_width()
+
+def draw_leaderboard(leaderboard):
+    ldb = leaderboard.get_leaderboard()
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN and (event.key == K_BACKSPACE):
+                return
+            if event.type == MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                print(f"Mouse clicked at {x}, {y}")
+        
+        window.blit(background, (0, 0))
+        window.blit(leaderboard_frame, leaderboard_rect)
+        y = 143
+        for player in ldb:
+            x = 195
+            name = font.render(player['name'], True, 'WHITE')
+            score = font.render(player['score'], True, 'WHITE')
+            window.blit(name, (x, y))
+            x += 255
+            score_rect = score.get_rect()
+            score_rect.topright = (x, y)
+            window.blit(score, score_rect)
+            y += 52
+        pygame.display.update()
+
+        fps_clock.tick(fps)
+    print(ldb)
 
 def flappygame(player_name):
     leaderboard = Leaderboard(score_file, player_name)
@@ -151,12 +188,19 @@ if __name__ == "__main__":
                 if event.type == BLINK_EVENT:
                     show_text = not show_text
                 
+                if event.type == MOUSEBUTTONDOWN:
+                    leaderboard = Leaderboard(score_file, "")
+                    draw_leaderboard(leaderboard)
+                
                 if event.type == KEYDOWN and (event.key != K_SPACE and event.key != K_UP):
                     if event.unicode.isalnum() and len(player_name) < 9:
                         player_name += event.unicode
                 
                 if event.type == KEYDOWN and (event.key == K_BACKSPACE):
                     player_name = player_name[:-1]
+                
+                    
+                    
 
                 window.blit(background, (0, 0))
                 window.blit(title, title_rect)

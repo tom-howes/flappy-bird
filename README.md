@@ -43,9 +43,12 @@ Need to create current leaderboard from template if it doesn't exist
 
 Updated name text box to prompt user to enter input, restrict name length and prevent user starting game without a name.
 
+Created function draw_leaderboard with separate loop to blit the leaderboard on the screen for the user
+
 Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down, flop on death)
      - Add start (done) and finish animations
      - Explore ways to increase difficulty
      - Add leaderboard (working with terminal input - not displaying yet) and player stats etc.
      - Implement UI class for buttons / user input etc.
+     - Create separate screen for leaderboard
