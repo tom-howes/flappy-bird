@@ -17,7 +17,7 @@ class Pipe():
         self.bottom_pipe = pipe_image
 
         self.bottom = WINDOW_HEIGHT - pipe_image.get_height()
-        self.acceleration = (score // 5) * 0.5
+        self.acceleration = (score // 5)
         self.velocity = START_VELOCITY + self.acceleration
 
         self.passed = False
