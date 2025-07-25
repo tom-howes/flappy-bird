@@ -58,6 +58,20 @@ delete_open = pygame.image.load("images/trash_open.png").convert_alpha()
 delete_rect = delete_closed.get_rect()
 delete_rect.center = WINDOW_WIDTH - 50, WINDOW_HEIGHT - 50
 
+# Confimation screen initalization
+large_font = pygame.font.SysFont(None, 40)
+confirm_text = large_font.render(' Are you sure you want\nto reset the leaderboard?', True, 'BLACK')
+confirm_text_rect = confirm_text.get_rect()
+confirm_text_rect.center = WINDOW_WIDTH / 2, WINDOW_HEIGHT / 4
+yes_button = pygame.image.load("images/tick.png").convert_alpha()
+no_button = pygame.image.load("images/cross.png").convert_alpha()
+yes_button_rect = yes_button.get_rect()
+yes_button_rect.center = WINDOW_WIDTH / 2 - 100, WINDOW_HEIGHT / 2
+no_button_rect = no_button.get_rect()
+no_button_rect.center = WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 2
+print(yes_button_rect, no_button_rect)
+
+
 def draw_game_state(bird, pipes, score):
     window.blit(background, (0, 0))
     for pipe in pipes:
@@ -79,15 +93,15 @@ def draw_game_state(bird, pipes, score):
     for num in numbers:
         x_offset += score_images[num].get_width()
 
-def check_button_hover(button_rect, x, y):
-    if button_rect.x < x < button_rect.x + ldb_button.get_width():
-        if button_rect.y < y < button_rect.y + ldb_button.get_height():
+def check_button_hover(button_rect, button, x, y):
+    if button_rect.x < x < button_rect.x + button.get_width():
+        if button_rect.y < y < button_rect.y + button.get_height():
             return True
     
     return False
 
 def draw_leaderboard(leaderboard):
-    ldb = leaderboard.get_leaderboard()
+    ldb = leaderboard.get_leaderboard()   
     while True:
         x, y = pygame.mouse.get_pos()
         for event in pygame.event.get():
@@ -97,16 +111,17 @@ def draw_leaderboard(leaderboard):
             if event.type == KEYDOWN and (event.key == K_BACKSPACE):
                 return
             if event.type == MOUSEBUTTONDOWN:
-                if check_button_hover(back_button_rect, x, y):
+                if check_button_hover(back_button_rect, back_button, x, y):
                     return
-                if check_button_hover(delete_rect, x, y):
-                    print("hello")
-                
+                if check_button_hover(delete_rect, delete_open, x, y):
+                    if confirm():
+                        leaderboard.reset()
+                    return    
         
         window.blit(background, (0, 0))
         window.blit(leaderboard_frame, leaderboard_rect)
         window.blit(back_button, back_button_rect)
-        if check_button_hover(delete_rect,x, y):
+        if check_button_hover(delete_rect, delete_closed, x, y):
             window.blit(delete_open, delete_rect)
         else:
             window.blit(delete_closed, delete_rect)
@@ -124,6 +139,31 @@ def draw_leaderboard(leaderboard):
             y += 52
         pygame.display.update()
 
+        fps_clock.tick(fps)
+
+def confirm():
+    while True:
+        x, y = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if check_button_hover(yes_button_rect, yes_button, x, y):
+                    print("yes")
+                    return True
+                if check_button_hover(no_button_rect, no_button, x, y):
+                    print("cross")
+                    return False
+                print(x, y)
+                print("yes: ", yes_button_rect)
+                print("no: ", no_button_rect)
+        window.blit(background, (0, 0))
+        window.blit(confirm_text, confirm_text_rect)
+        window.blit(yes_button, yes_button_rect)
+        window.blit(no_button, no_button_rect)
+        
+        pygame.display.update()
         fps_clock.tick(fps)
 
 def flappygame(player_name):
@@ -214,7 +254,7 @@ if __name__ == "__main__":
                 
                 if event.type == MOUSEBUTTONDOWN:
                     x, y = pygame.mouse.get_pos()
-                    if check_button_hover(ldb_button_rect, x, y):
+                    if check_button_hover(ldb_button_rect, ldb_button, x, y):
                         leaderboard = Leaderboard(score_file, "")
                         draw_leaderboard(leaderboard)
                 

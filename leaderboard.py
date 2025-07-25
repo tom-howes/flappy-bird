@@ -49,3 +49,4 @@ class Leaderboard():
     # Function to reset leaderboard to template
     def reset(self):
         shutil.copyfile(score_template, score_file)
+        self.load_leaderboard(score_file)

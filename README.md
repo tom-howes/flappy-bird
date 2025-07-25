@@ -45,12 +45,15 @@ Updated name text box to prompt user to enter input, restrict name length and pr
 
 Added leaderboard screen with up-to-date leaderboard and button to navigate to it.
 
+Added bird tilt based on velocity. Encountered some issues with downward trajectory where image was flickering so I put a hard cap on velocity >=6 to stay at a consistent angle.
+
+Added a reset button for the leaderboard that overwrites the leaderboard json file with the initial template, added a confirmation screen to ensure users don't accidentally clear the leaderboard. Button opens the trash can lid on hover.
+
 Next steps:
-     - Add animations to bird (flapping wings (done), tilt up/down, flop on death)
+     - Add animations to bird (flapping wings (done), tilt up/down (done), flop on death)
      - Add start (done) and finish animation
      - Explore ways to increase difficulty
      - Add leaderboard (done) and player stats etc.
-     - Implement UI class for buttons / user input etc. (not sure if needed - maybe refactor)
      - Create separate screen for leaderboard (done)
      - Add back button for leaderboard screen (done)
-     - Add clear/reset button for leaderboard screen (maybe add an are you sure? option)
+     - Add clear/reset button for leaderboard screen (done)
