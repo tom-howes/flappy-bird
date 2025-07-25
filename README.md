@@ -53,3 +53,4 @@ Next steps:
      - Implement UI class for buttons / user input etc. (not sure if needed - maybe refactor)
      - Create separate screen for leaderboard (done)
      - Add back button for leaderboard screen (done)
+     - Add clear/reset button for leaderboard screen (maybe add an are you sure? option)

@@ -21,6 +21,18 @@ class Bird(pygame.sprite.Sprite):
     
     def draw(self, window):  
         self.image = self.get_image()
+        # - 3.5
+        
+        if self.velocity >= 6:
+            self.image = pygame.transform.rotate(self.image, -25)
+        else:
+            self.image = pygame.transform.rotate(self.image, round(-3.5 * self.velocity, 1))
+        # # - 3.5
+        # elif 0 < self.velocity < 6:
+        #     self.image = pygame.transform.rotate(self.image, -10)
+        # elif self.velocity < -6:
+        #     self.image = pygame.transform.rotate(self.image, 20)
+        print("speed: ", self.velocity)
         window.blit(self.image, (self.x, self.y))
     
     def get_image(self):
