@@ -91,6 +91,7 @@ def draw_game_state(bird, pipes, score):
 
     # Blitting images on the window
     for num in numbers:
+        window.blit(score_images[num], (x_offset, WINDOW_WIDTH * 0.02))
         x_offset += score_images[num].get_width()
 
 def check_button_hover(button_rect, button, x, y):
