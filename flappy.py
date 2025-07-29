@@ -71,6 +71,11 @@ no_button_rect = no_button.get_rect()
 no_button_rect.center = WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 2
 print(yes_button_rect, no_button_rect)
 
+# Game over screen initialization
+game_over = pygame.image.load("images/game_over.png").convert_alpha()
+game_over_rect = game_over.get_rect()
+game_over_rect.center = WINDOW_WIDTH / 2, WINDOW_HEIGHT / 3
+
 
 def draw_game_state(bird, pipes, score):
     window.blit(background, (0, 0))
@@ -140,6 +145,31 @@ def draw_leaderboard(leaderboard):
             y += 52
         pygame.display.update()
 
+        fps_clock.tick(fps)
+
+def draw_game_over(score):
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                if check_button_hover(ldb_button_rect, ldb_button, x, y):
+                    leaderboard = Leaderboard(score_file, "")
+                    draw_leaderboard(leaderboard)
+            # add home button
+                
+
+        window.blit(background, (0, 0))
+        window.blit(game_over, game_over_rect)
+        score_text = large_font.render(f'Your Score : {score}', True, 'Black')
+        score_text_rect = score_text.get_rect()
+        score_text_rect.center = WINDOW_WIDTH / 2,  (WINDOW_HEIGHT / 1.3)
+        window.blit(score_text, score_text_rect)
+        window.blit(ldb_button, ldb_button_rect)
+        pygame.display.update()
+    
         fps_clock.tick(fps)
 
 def confirm():
@@ -221,10 +251,7 @@ def flappygame(player_name):
             if pipe.collision(bird, window) or bird.check_bounds(WINDOW_HEIGHT):
                 while not bird.check_bounds(WINDOW_HEIGHT):
                     death_animation(bird, pipes, score)
-                    
-                leaderboard.add_current_score(score)
-                leaderboard.update()
-                print("game over!")
+                draw_game_over(score)
                 return
             if pipe.x + pipe.top_pipe.get_width() < 5:
                 remove.append(pipe)
