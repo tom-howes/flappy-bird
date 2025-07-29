@@ -5,7 +5,7 @@ from leaderboard import Leaderboard
 from pygame.locals import *
 from bird import Bird
 from pipe import Pipe
-import time
+
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 499
 score_file = "scores/leaderboard_current.json"
@@ -167,6 +167,33 @@ def confirm():
         pygame.display.update()
         fps_clock.tick(fps)
 
+def death_animation(bird, pipes, score):
+    window.blit(background, (0, 0))
+    for pipe in pipes:
+        pipe.stop()
+        pipe.draw(window)
+    bird.fall()
+    bird.draw(window)
+
+    # Fetching digits of score
+    numbers = [int(x) for x in list(str(score))]
+    width = 0
+
+    # Finding width of score images from numbers
+    for num in numbers:
+        width += score_images[num].get_width()
+    
+    x_offset = (WINDOW_WIDTH - width)/1.1
+
+    # Blitting images on the window
+    for num in numbers:
+        window.blit(score_images[num], (x_offset, WINDOW_WIDTH * 0.02))
+        x_offset += score_images[num].get_width()
+    
+    pygame.display.update()
+
+    fps_clock.tick(fps)
+
 def flappygame(player_name):
     leaderboard = Leaderboard(score_file, player_name)
     score = 0
@@ -192,6 +219,9 @@ def flappygame(player_name):
         for pipe in pipes:
             pipe.move()
             if pipe.collision(bird, window) or bird.check_bounds(WINDOW_HEIGHT):
+                while not bird.check_bounds(WINDOW_HEIGHT):
+                    death_animation(bird, pipes, score)
+                    
                 leaderboard.add_current_score(score)
                 leaderboard.update()
                 print("game over!")

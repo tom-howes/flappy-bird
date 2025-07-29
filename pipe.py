@@ -54,3 +54,7 @@ class Pipe():
     
     def print_pos(self):
         print("x: ", self.x)
+    
+    def stop(self):
+        self.velocity = 0
+        self.acceleration = 0

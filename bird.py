@@ -1,4 +1,5 @@
 import pygame
+import time
 
 birdimages = [
     'images/bird-dn.png',
@@ -10,7 +11,6 @@ class Bird(pygame.sprite.Sprite):
 
         super().__init__()
         self.image = pygame.image.load(birdimages[1])
-        self.wings = 'up'
         self.mask = pygame.mask.from_surface(self.image)
 
         self.x = horizontal
@@ -18,29 +18,33 @@ class Bird(pygame.sprite.Sprite):
         self.velocity = MAX_VELOCITY
         self.height = self.y
         self.flapped = False
+        self.asleep = False
     
     def draw(self, window):  
         self.image = self.get_image()
-        # - 3.5
         
-        if self.velocity >= 6:
+        if self.asleep == True:
+            self.image = pygame.transform.flip(self.image, False, True)
+        
+        elif self.velocity >= 6:
             self.image = pygame.transform.rotate(self.image, -25)
         else:
             self.image = pygame.transform.rotate(self.image, round(-3.5 * self.velocity, 1))
-        # # - 3.5
-        # elif 0 < self.velocity < 6:
-        #     self.image = pygame.transform.rotate(self.image, -10)
-        # elif self.velocity < -6:
-        #     self.image = pygame.transform.rotate(self.image, 20)
-        print("speed: ", self.velocity)
         window.blit(self.image, (self.x, self.y))
     
     def get_image(self):
+        # Bird has had a collision and is 'asleep'
+        if self.asleep == True:
+            return pygame.image.load(birdimages[1])
+        
+        # Flapped wings
         if self.flapped == True:
             self.flapped = False
             return pygame.image.load(birdimages[0])
+        # No flap but bird is climbing in altitude
         elif self.flapped == False and self.velocity < 0:
             return pygame.image.load(birdimages[0])
+        # Wings raise ready to flap
         else:
             return pygame.image.load(birdimages[1])
             
@@ -65,3 +69,9 @@ class Bird(pygame.sprite.Sprite):
             return True
         
         return False
+    
+    def fall(self):
+        if self.asleep == False:
+            time.sleep(0.5)
+            self.asleep = True
+        self.y += 5
