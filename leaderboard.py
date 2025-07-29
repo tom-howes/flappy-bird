@@ -24,21 +24,23 @@ class Leaderboard():
     # Function to blit leaderboard onto screen
     def get_leaderboard(self):
         return self.leaderboard['players']
-    # Adds current player and score to leaderboard if its is higher than the others
+    # Adds current player and score to leaderboard if it is higher than some existing score
     def add_current_score(self, score):
+        # Skip if no score
         if score == 0:
             return
         leaders = self.leaderboard['players']
         player_score = {"name" : self.player, "score" : str(score)}
-        if (len(leaders) == 0):
-            leaders.insert(0, player_score)
-        else:
+        # Boolean to track if score added
+        added = False
+        # If leaderboard is not empty, compare to existing scores, put in appropriate position
+        if len(leaders) > 0:
             for i in range(len(leaders)):
                 if int(leaders[i]["score"]) < score:
                     leaders.insert(i, player_score)
+                    added = True
                     break
-            
-        if len(leaders) < 5:
+        if len(leaders) < 5 and not added:
             leaders.append(player_score)
         self.leaderboard['players'] = leaders[:5]
 
