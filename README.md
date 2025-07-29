@@ -51,9 +51,10 @@ Added a reset button for the leaderboard that overwrites the leaderboard json fi
 
 Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down (done), flop on death)
-     - Add start (done) and finish animation
-     - Explore ways to increase difficulty
-     - Add leaderboard (done) and player stats etc.
+     - Add start (done) and finish (game over) animation
+     - Explore ways to increase difficulty (done)
+     - Add sounds
+     - Add leaderboard (done) and player stats etc. (number of flaps, pipes passed)
      - Create separate screen for leaderboard (done)
      - Add back button for leaderboard screen (done)
      - Add clear/reset button for leaderboard screen (done)

@@ -30,11 +30,14 @@ class Leaderboard():
             return
         leaders = self.leaderboard['players']
         player_score = {"name" : self.player, "score" : str(score)}
-        for i in range(len(leaders)):
-            if int(leaders[i]["score"]) < score:
-                leaders.insert(i, player_score)
-                break
-        
+        if (len(leaders) == 0):
+            leaders.insert(0, player_score)
+        else:
+            for i in range(len(leaders)):
+                if int(leaders[i]["score"]) < score:
+                    leaders.insert(i, player_score)
+                    break
+            
         if len(leaders) < 5:
             leaders.append(player_score)
         self.leaderboard['players'] = leaders[:5]
