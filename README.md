@@ -51,9 +51,11 @@ Added a reset button for the leaderboard that overwrites the leaderboard json fi
 
 When player loses, the bird will freeze for a split second, before flipping upside down and falling off the screen - this will then prompt a game over screen where you can check the leaderboard or go Home.
 
+Refactored into main function and added a home button to game over screen that calls main() again, restarting the game loop.
+
 Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down (done), flop on death (done))
-     - Add start (done) and finish (game over) animation (in progress)
+     - Add start (done) and finish (game over) animation (done)
      - Explore ways to increase difficulty (done)
      - Add sounds
      - Add leaderboard (done) and player stats etc. (number of flaps, pipes passed)

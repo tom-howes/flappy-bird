@@ -15,6 +15,8 @@ score_file = "scores/leaderboard_current.json"
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 elevation = WINDOW_HEIGHT
 fps = 32
+pygame.init()
+fps_clock = pygame.time.Clock()
 background = pygame.image.load('images/background.jpg')
 score_images = [pygame.image.load('images/0.jpg').convert_alpha(),
                 pygame.image.load('images/1.jpg').convert_alpha(),
@@ -42,7 +44,6 @@ player_name = ''
 enter_name = 'Enter Name...'
 input_rect = pygame.Rect(WINDOW_WIDTH / 2 - 70, WINDOW_HEIGHT / 2 + 120, 140, 32)
 colour = pygame.Color('White')
-name_colour = pygame.Color('White')
 ldb_button = pygame.image.load("images/ldb-button.png").convert_alpha()
 ldb_button_rect = ldb_button.get_rect()
 
@@ -69,12 +70,14 @@ yes_button_rect = yes_button.get_rect()
 yes_button_rect.center = WINDOW_WIDTH / 2 - 100, WINDOW_HEIGHT / 2
 no_button_rect = no_button.get_rect()
 no_button_rect.center = WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 2
-print(yes_button_rect, no_button_rect)
 
 # Game over screen initialization
 game_over = pygame.image.load("images/game_over.png").convert_alpha()
 game_over_rect = game_over.get_rect()
 game_over_rect.center = WINDOW_WIDTH / 2, WINDOW_HEIGHT / 3
+home_button = pygame.image.load("images/home.png").convert_alpha()
+home_button_rect = home_button.get_rect()
+home_button_rect.x, home_button_rect.y = back_button_rect.x, (WINDOW_HEIGHT - home_button.get_height())
 
 
 def draw_game_state(bird, pipes, score):
@@ -158,9 +161,11 @@ def draw_game_over(score):
                 if check_button_hover(ldb_button_rect, ldb_button, x, y):
                     leaderboard = Leaderboard(score_file, "")
                     draw_leaderboard(leaderboard)
+                if check_button_hover(home_button_rect, home_button, x, y):
+                    main()
+                    
             # add home button
-                
-
+             
         window.blit(background, (0, 0))
         window.blit(game_over, game_over_rect)
         score_text = large_font.render(f'Your Score : {score}', True, 'Black')
@@ -168,6 +173,7 @@ def draw_game_over(score):
         score_text_rect.center = WINDOW_WIDTH / 2,  (WINDOW_HEIGHT / 1.3)
         window.blit(score_text, score_text_rect)
         window.blit(ldb_button, ldb_button_rect)
+        window.blit(home_button, home_button_rect)
         pygame.display.update()
     
         fps_clock.tick(fps)
@@ -181,14 +187,9 @@ def confirm():
                 sys.exit()
             if event.type == MOUSEBUTTONDOWN:
                 if check_button_hover(yes_button_rect, yes_button, x, y):
-                    print("yes")
                     return True
                 if check_button_hover(no_button_rect, no_button, x, y):
-                    print("cross")
                     return False
-                print(x, y)
-                print("yes: ", yes_button_rect)
-                print("no: ", no_button_rect)
         window.blit(background, (0, 0))
         window.blit(confirm_text, confirm_text_rect)
         window.blit(yes_button, yes_button_rect)
@@ -234,7 +235,6 @@ def flappygame(player_name):
     bird = Bird(horizontal, vertical)
 
     while True:
-
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
@@ -251,6 +251,8 @@ def flappygame(player_name):
             if pipe.collision(bird, window) or bird.check_bounds(WINDOW_HEIGHT):
                 while not bird.check_bounds(WINDOW_HEIGHT):
                     death_animation(bird, pipes, score)
+                leaderboard.add_current_score(score)
+                leaderboard.update()
                 draw_game_over(score)
                 return
             if pipe.x + pipe.top_pipe.get_width() < 5:
@@ -275,74 +277,72 @@ def flappygame(player_name):
         fps_clock.tick(fps)
         
 
-if __name__ == "__main__":
-
-    pygame.init()
-    fps_clock = pygame.time.Clock()
+def main():
 
     pygame.display.set_caption('Flappy Bird')
     
     print("WELCOME TO TOM'S FLAPPY BIRD")
     print("Press space or enter to start the game")
 
-    while True:
-                
-        horizontal = int(WINDOW_WIDTH / 5)
-        vertical = int(WINDOW_HEIGHT / 2)
+    show_text = True
+    player_name = ""
+    name_colour = pygame.Color('White')
 
-        ground = 0
-        while True:
-            for event in pygame.event.get():
+    while True:       
+        for event in pygame.event.get():
 
-                # Exit application on user pressing ESC or clicking X
-                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                    pygame.quit()
-                    sys.exit()
+            # Exit application on user pressing ESC or clicking X
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit()
 
-                # Start game on user pressing SPACE or UP
-                if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                    if player_name != "":
-                        flappygame(player_name)
-                    else:
-                        name_colour = (255, 0, 0)
+            # Start game on user pressing SPACE or UP
+            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
+                if player_name != "":
+                    flappygame(player_name)
+                else:
+                    name_colour = (255, 0, 0)
 
-                # Maintain starting image if no user action
-                if event.type == BLINK_EVENT:
-                    show_text = not show_text
-                
-                if event.type == MOUSEBUTTONDOWN:
-                    x, y = pygame.mouse.get_pos()
-                    if check_button_hover(ldb_button_rect, ldb_button, x, y):
-                        leaderboard = Leaderboard(score_file, "")
-                        draw_leaderboard(leaderboard)
-                
-                if event.type == KEYDOWN and (event.key != K_SPACE and event.key != K_UP):
-                    if event.unicode.isalnum() and len(player_name) < 9:
-                        player_name += event.unicode
-                
-                if event.type == KEYDOWN and (event.key == K_BACKSPACE):
-                    player_name = player_name[:-1]
-                
+            # Maintain starting image if no user action
+            if event.type == BLINK_EVENT:
+                show_text = not show_text
+            
+            if event.type == MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                if check_button_hover(ldb_button_rect, ldb_button, x, y):
+                    leaderboard = Leaderboard(score_file, "")
+                    draw_leaderboard(leaderboard)
+            
+            if event.type == KEYDOWN and (event.key != K_SPACE and event.key != K_UP):
+                if event.unicode.isalnum() and len(player_name) < 9:
+                    player_name += event.unicode
+            
+            if event.type == KEYDOWN and (event.key == K_BACKSPACE):
+                player_name = player_name[:-1]
+            
 
-                window.blit(background, (0, 0))
-                window.blit(title, title_rect)
-                if show_text:
-                    window.blit(text, text_rect)
+            window.blit(background, (0, 0))
+            window.blit(title, title_rect)
+            if show_text:
+                window.blit(text, text_rect)
 
-                pygame.draw.rect(window, colour, input_rect, 2)
-                
-                text_surface = font.render(player_name, True, (255, 255, 255))
-                name_surface = font.render(enter_name, True, name_colour)
-                name_surface.set_alpha(128)
-                window.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
+            pygame.draw.rect(window, colour, input_rect, 2)
+            
+            text_surface = font.render(player_name, True, (255, 255, 255))
+            name_surface = font.render(enter_name, True, name_colour)
+            name_surface.set_alpha(128)
+            window.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
 
-                window.blit(ldb_button, (0, 0))
+            window.blit(ldb_button, (0, 0))
 
-                if player_name == "":
-                    window.blit(name_surface, (input_rect.x + 5, input_rect.y + 8))
+            if player_name == "":
+                window.blit(name_surface, (input_rect.x + 5, input_rect.y + 8))
 
-                # Refreshes screen
-                pygame.display.update()
+            # Refreshes screen
+            pygame.display.update()
 
-                # Set framerate
-                fps_clock.tick(fps)
+            # Set framerate
+            fps_clock.tick(fps)
+
+if __name__ == "__main__":
+    main()
