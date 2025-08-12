@@ -105,3 +105,10 @@ class Bird(pygame.sprite.Sprite):
             time.sleep(0.5)
             self.asleep = True
         self.y += 5
+    
+    def check_powerup(self, powerup):
+        offset = (self.x - powerup.x, self.y - powerup.y)
+        if self.mask.overlap(powerup.mask, offset):
+            print("got powerup!")
+            return True
+        

@@ -5,7 +5,7 @@ START_VELOCITY = 5
 
 class Pipe():
 
-    def __init__(self, x, score):
+    def __init__(self, x, score, slowed):
         """ Initialises a pipe object with a random height
         """
         self.x = x
@@ -22,6 +22,10 @@ class Pipe():
         # Pipe speed increments with score in multiples of 5
         self.acceleration = (score // 5)
         self.velocity = START_VELOCITY + self.acceleration
+
+        # Check for slow powerup, reduce velocity
+        if slowed == True:
+            self.velocity *= 0.8
 
         self.passed = False
 
@@ -46,20 +50,20 @@ class Pipe():
         window.blit(self.top_pipe, (self.x, self.top))
         window.blit(self.bottom_pipe, (self.x, self.bottom))
     
-    def collision(self, bird):
-        """ Checks if bird overlaps with bottom pipe or top pipe
-            bird -- bird object
+    def collision(self, object):
+        """ Checks if bird/powerup overlaps with bottom pipe or top pipe
+            bird -- bird or powerup object
             If masks overlap collision occurs - Return True
         """
-        bird_mask = bird.get_mask()
+        object_mask = object.get_mask()
         top_mask = pygame.mask.from_surface(self.top_pipe)
         bottom_mask = pygame.mask.from_surface(self.bottom_pipe)
 
-        top_offset = (self.x - bird.x, self.top - bird.y)
-        bottom_offset = (self.x - bird.x, self.bottom - bird.y)
+        top_offset = (self.x - object.x, self.top - object.y)
+        bottom_offset = (self.x - object.x, self.bottom - object.y)
 
-        b_coll = bird_mask.overlap(bottom_mask, bottom_offset)
-        t_coll = bird_mask.overlap(top_mask, top_offset)
+        b_coll = object_mask.overlap(bottom_mask, bottom_offset)
+        t_coll = object_mask.overlap(top_mask, top_offset)
 
         if b_coll or t_coll:
             return True
@@ -76,3 +80,9 @@ class Pipe():
         """
         self.velocity = 0
         self.acceleration = 0
+
+    def slow_down(self):
+        self.slowed = True
+    
+    def speed_up(self):
+        self.slowed = False

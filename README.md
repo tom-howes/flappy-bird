@@ -59,8 +59,9 @@ Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down (done), flop on death (done))
      - Add start (done) and finish (game over) animation (done)
      - Explore ways to increase difficulty (done)
-     - Add sounds
      - Add leaderboard (done) and player stats etc. (number of flaps, pipes passed)
      - Create separate screen for leaderboard (done)
      - Add back button for leaderboard screen (done)
      - Add clear/reset button for leaderboard screen (done)
+     - Add power ups (added slow, add invulnerability)
+     - Add sounds

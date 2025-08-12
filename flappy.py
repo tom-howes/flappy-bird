@@ -5,6 +5,7 @@ from leaderboard import Leaderboard
 from pygame.locals import *
 from bird import Bird
 from pipe import Pipe
+from powerup import Powerup
 
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 499
@@ -83,7 +84,7 @@ home_button_rect.x, home_button_rect.y = back_button_rect.x, (WINDOW_HEIGHT - ho
 
 
 
-def draw_game_state(bird, pipes, score):
+def draw_game_state(bird, pipes, powerups, score):
     """ Blits each frame of ongoing game to window
 
         bird -- bird object
@@ -94,6 +95,9 @@ def draw_game_state(bird, pipes, score):
     window.blit(background, (0, 0))
     for pipe in pipes:
         pipe.draw(window)
+    
+    for powerup in powerups:
+        powerup.draw(window)
     
     bird.draw(window)
 
@@ -231,7 +235,7 @@ def confirm():
         pygame.display.update()
         fps_clock.tick(fps)
 
-def death_animation(bird, pipes, score):
+def sleep_animation(bird, pipes, score):
     """ When a collision occurs, flip the bird upside down and fall out of the sky
 
         bird -- bird object
@@ -277,8 +281,14 @@ def flappygame(leaderboard):
     horizontal = int(WINDOW_HEIGHT/5)
     vertical = int(WINDOW_WIDTH/2)
 
-    pipes = [Pipe(WINDOW_WIDTH, score)]
+    pipes = [Pipe(WINDOW_WIDTH, score, False)]
     bird = Bird(horizontal, vertical)
+
+    # Array of powerups on screen
+    powerups = []
+
+    # Dict of active powerups
+    active = {}
 
     while True:
         for event in pygame.event.get():
@@ -290,13 +300,36 @@ def flappygame(leaderboard):
         
         bird.move()
 
+        # Random chance to spawn powerup (1 in 400 each frame - average spawntime = 12.5s)
+        spawn_powerup = random.randint(0, 400)
+        if spawn_powerup == 200:
+            print(spawn_powerup)
+            powerup = Powerup(pipes)
+            powerups.append(powerup)
+
+        # Init powerup buffs
+        slowed = False
+
+        # Check powerup type and timer status
+        for type in active:
+            # Decrement timer
+            active[type] -= 1
+            if type == "slow":
+                slowed = True
+            # If timer reaches 0, remove powerup
+            if active[type] == 0:
+                active.pop(type)
+                break
+                    
+    
         for pipe in pipes:
+            print(pipe.velocity)
             pipe.move()
             # Check for collisions
-            if pipe.collision(bird, window) or bird.check_bounds(WINDOW_HEIGHT):
+            if pipe.collision(bird) or bird.check_bounds(WINDOW_HEIGHT):
                 # Play death animation only if bird hits pipe
                 while not bird.check_bounds(WINDOW_HEIGHT):
-                    death_animation(bird, pipes, score)
+                    sleep_animation(bird, pipes, score)
                 leaderboard.add_current_score(score)
                 leaderboard.update()
                 draw_game_over(score, leaderboard)
@@ -309,11 +342,20 @@ def flappygame(leaderboard):
             if not pipe.passed and pipe.x + (pipe.top_pipe.get_width() / 2) < bird.x:
                 pipe.passed = True
                 score += 1
-                pipes.append(Pipe(WINDOW_WIDTH, score))
-            
-                 
+                pipes.append(Pipe(WINDOW_WIDTH, score, slowed))
+        
+        # If bird collects (collides with) powerup, activate powerup on a timer and remove from screen
+        for powerup in powerups:
+            if bird.check_powerup(powerup):
+                timer, type = powerup.activate()
+                active[type] = timer
+                powerups.remove(powerup)
+            else:
+                powerup.move(pipes[-1].velocity)
+        
+             
         # Blits current image / score status to screen
-        draw_game_state(bird, pipes, score) 
+        draw_game_state(bird, pipes, powerups, score) 
 
         
         # Refreshing game window and displaying the score
