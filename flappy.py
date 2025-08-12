@@ -12,11 +12,15 @@ score_file = "scores/leaderboard_current.json"
 
 # Home screen initialization
 
+# pygame
+pygame.init()
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 elevation = WINDOW_HEIGHT
 fps = 32
-pygame.init()
 fps_clock = pygame.time.Clock()
+pygame.font.init()
+
+# images / text
 background = pygame.image.load('images/background.jpg')
 score_images = [pygame.image.load('images/0.jpg').convert_alpha(),
                 pygame.image.load('images/1.jpg').convert_alpha(),
@@ -31,7 +35,6 @@ score_images = [pygame.image.load('images/0.jpg').convert_alpha(),
 title = pygame.image.load('images/Title_text.png').convert_alpha()
 title_rect = title.get_rect()
 title_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 50)
-pygame.font.init()
 font = pygame.font.SysFont(None, 24)
 text = font.render('Press SPACE or UP to play!', True, 'WHITE')
 text_rect = text.get_rect()
@@ -39,7 +42,6 @@ text_rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 190)
 BLINK_EVENT = pygame.event.custom_type()
 pygame.time.set_timer(BLINK_EVENT, 500)
 show_text = True
-
 player_name = ''
 enter_name = 'Enter Name...'
 input_rect = pygame.Rect(WINDOW_WIDTH / 2 - 70, WINDOW_HEIGHT / 2 + 120, 140, 32)
@@ -80,7 +82,15 @@ home_button_rect = home_button.get_rect()
 home_button_rect.x, home_button_rect.y = back_button_rect.x, (WINDOW_HEIGHT - home_button.get_height())
 
 
+
 def draw_game_state(bird, pipes, score):
+    """ Blits each frame of ongoing game to window
+
+        bird -- bird object
+        pipes -- array of pipe objects
+        score -- player's current score
+    """
+
     window.blit(background, (0, 0))
     for pipe in pipes:
         pipe.draw(window)
@@ -97,12 +107,18 @@ def draw_game_state(bird, pipes, score):
     
     x_offset = (WINDOW_WIDTH - width)/1.1
 
-    # Blitting images on the window
     for num in numbers:
         window.blit(score_images[num], (x_offset, WINDOW_WIDTH * 0.02))
         x_offset += score_images[num].get_width()
 
 def check_button_hover(button_rect, button, x, y):
+    """ Returns true if mouse is over a given button
+
+        button_rect -- pygame rect of button img
+        button -- clickable menu button
+        x -- mouse x pos
+        y -- mouse y pos
+    """
     if button_rect.x < x < button_rect.x + button.get_width():
         if button_rect.y < y < button_rect.y + button.get_height():
             return True
@@ -110,6 +126,10 @@ def check_button_hover(button_rect, button, x, y):
     return False
 
 def draw_leaderboard(leaderboard):
+    """ Draws a new screen with the current leaderboard, a back button and a delete button
+
+        leaderboard -- current leaderboard object
+    """
     ldb = leaderboard.get_leaderboard()   
     while True:
         x, y = pygame.mouse.get_pos()
@@ -124,18 +144,23 @@ def draw_leaderboard(leaderboard):
                     return
                 if check_button_hover(delete_rect, delete_open, x, y):
                     if confirm():
+                        # Reverts leaderboard to blank template
                         leaderboard.reset()
                     return    
         
         window.blit(background, (0, 0))
         window.blit(leaderboard_frame, leaderboard_rect)
         window.blit(back_button, back_button_rect)
+
+        # Animation for trash can opening on hover over delete button
         if check_button_hover(delete_rect, delete_closed, x, y):
             window.blit(delete_open, delete_rect)
         else:
             window.blit(delete_closed, delete_rect)
 
         y = 143
+
+        # Blits player name and score onto leaderboard frame
         for player in ldb:
             x = 195
             name = font.render(player['name'], True, 'WHITE')
@@ -150,7 +175,11 @@ def draw_leaderboard(leaderboard):
 
         fps_clock.tick(fps)
 
-def draw_game_over(score):
+def draw_game_over(score, leaderboard):
+    """ Draws a Game Over screen that displays player score and allows player to go to home screen or leaderboard
+
+        score -- current player score to be displayed
+    """
     while True:
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -158,14 +187,14 @@ def draw_game_over(score):
                 sys.exit()
             if event.type == MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
+                # Go to leaderboard screen
                 if check_button_hover(ldb_button_rect, ldb_button, x, y):
-                    leaderboard = Leaderboard(score_file, "")
                     draw_leaderboard(leaderboard)
+                # Returns to home screen
                 if check_button_hover(home_button_rect, home_button, x, y):
                     main()
-                    
-            # add home button
-             
+
+        # Background, Game Over text and player score     
         window.blit(background, (0, 0))
         window.blit(game_over, game_over_rect)
         score_text = large_font.render(f'Your Score : {score}', True, 'Black')
@@ -179,6 +208,8 @@ def draw_game_over(score):
         fps_clock.tick(fps)
 
 def confirm():
+    """ Confirmation screen to make sure player wants to reset leaderboard
+    """
     while True:
         x, y = pygame.mouse.get_pos()
         for event in pygame.event.get():
@@ -186,8 +217,10 @@ def confirm():
                 pygame.quit()
                 sys.exit()
             if event.type == MOUSEBUTTONDOWN:
+                # Delete leaderboard
                 if check_button_hover(yes_button_rect, yes_button, x, y):
                     return True
+                # Return to prev screen
                 if check_button_hover(no_button_rect, no_button, x, y):
                     return False
         window.blit(background, (0, 0))
@@ -199,7 +232,15 @@ def confirm():
         fps_clock.tick(fps)
 
 def death_animation(bird, pipes, score):
+    """ When a collision occurs, flip the bird upside down and fall out of the sky
+
+        bird -- bird object
+        pipes -- array of pipes
+        score -- current player score
+    """
     window.blit(background, (0, 0))
+
+    # Draw pipes stationary
     for pipe in pipes:
         pipe.stop()
         pipe.draw(window)
@@ -225,8 +266,13 @@ def death_animation(bird, pipes, score):
 
     fps_clock.tick(fps)
 
-def flappygame(player_name):
-    leaderboard = Leaderboard(score_file, player_name)
+def flappygame(leaderboard):
+    """  Main game loop that begins after player enters name and initiates game
+
+        leaderboard -- leaderboard object that keeps track of top scores
+    """
+
+    # Init bird and pipe start positions, score set to 0
     score = 0
     horizontal = int(WINDOW_HEIGHT/5)
     vertical = int(WINDOW_WIDTH/2)
@@ -243,30 +289,30 @@ def flappygame(player_name):
                 bird.flap()
         
         bird.move()
-        
-        remove = []
 
         for pipe in pipes:
             pipe.move()
+            # Check for collisions
             if pipe.collision(bird, window) or bird.check_bounds(WINDOW_HEIGHT):
+                # Play death animation only if bird hits pipe
                 while not bird.check_bounds(WINDOW_HEIGHT):
                     death_animation(bird, pipes, score)
                 leaderboard.add_current_score(score)
                 leaderboard.update()
-                draw_game_over(score)
+                draw_game_over(score, leaderboard)
                 return
+            # Remove pipes that hit end of screen
             if pipe.x + pipe.top_pipe.get_width() < 5:
-                remove.append(pipe)
+                pipes.remove(pipe)
             
+            # Increment score if pipe passed
             if not pipe.passed and pipe.x + (pipe.top_pipe.get_width() / 2) < bird.x:
                 pipe.passed = True
                 score += 1
                 pipes.append(Pipe(WINDOW_WIDTH, score))
             
-            for r in remove:
-                pipes.remove(r)
                  
-        
+        # Blits current image / score status to screen
         draw_game_state(bird, pipes, score) 
 
         
@@ -278,15 +324,21 @@ def flappygame(player_name):
         
 
 def main():
+    """ Main (home screen) function that initiates the flappy bird instance
+    """
 
     pygame.display.set_caption('Flappy Bird')
     
+    # Terminal output
     print("WELCOME TO TOM'S FLAPPY BIRD")
     print("Press space or enter to start the game")
 
+    # Used by blinking text
     show_text = True
+    
     player_name = ""
     name_colour = pygame.Color('White')
+    leaderboard = Leaderboard(score_file, "")
 
     while True:       
         for event in pygame.event.get():
@@ -299,7 +351,8 @@ def main():
             # Start game on user pressing SPACE or UP
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if player_name != "":
-                    flappygame(player_name)
+                    leaderboard.set_player(player_name)
+                    flappygame(leaderboard)
                 else:
                     name_colour = (255, 0, 0)
 
@@ -310,7 +363,6 @@ def main():
             if event.type == MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 if check_button_hover(ldb_button_rect, ldb_button, x, y):
-                    leaderboard = Leaderboard(score_file, "")
                     draw_leaderboard(leaderboard)
             
             if event.type == KEYDOWN and (event.key != K_SPACE and event.key != K_UP):
