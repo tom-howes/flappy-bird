@@ -333,9 +333,9 @@ def main():
     print("WELCOME TO TOM'S FLAPPY BIRD")
     print("Press space or enter to start the game")
 
-    # Used by blinking text
+    # Used to create blinking text effect
     show_text = True
-    
+
     player_name = ""
     name_colour = pygame.Color('White')
     leaderboard = Leaderboard(score_file, "")
@@ -353,26 +353,31 @@ def main():
                 if player_name != "":
                     leaderboard.set_player(player_name)
                     flappygame(leaderboard)
+                # If no player name input, text turns red to notify user
                 else:
                     name_colour = (255, 0, 0)
 
-            # Maintain starting image if no user action
+            # Blinking start game text
             if event.type == BLINK_EVENT:
                 show_text = not show_text
             
+            # Check for leaderboard button click
             if event.type == MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 if check_button_hover(ldb_button_rect, ldb_button, x, y):
                     draw_leaderboard(leaderboard)
             
+            # Handle non-alphanumeric characters in player name input
             if event.type == KEYDOWN and (event.key != K_SPACE and event.key != K_UP):
                 if event.unicode.isalnum() and len(player_name) < 9:
                     player_name += event.unicode
             
+            # Allow deleting characters from player name
             if event.type == KEYDOWN and (event.key == K_BACKSPACE):
                 player_name = player_name[:-1]
             
 
+            # Blit home screen components
             window.blit(background, (0, 0))
             window.blit(title, title_rect)
             if show_text:
@@ -387,6 +392,7 @@ def main():
 
             window.blit(ldb_button, (0, 0))
 
+            # Display prompt text if user has not entered name yet
             if player_name == "":
                 window.blit(name_surface, (input_rect.x + 5, input_rect.y + 8))
 

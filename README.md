@@ -53,6 +53,8 @@ When player loses, the bird will freeze for a split second, before flipping upsi
 
 Refactored into main function and added a home button to game over screen that calls main() again, restarting the game loop.
 
+Bug where leaderboard is not resetting from leaderboard screen until home button clicked
+
 Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down (done), flop on death (done))
      - Add start (done) and finish (game over) animation (done)

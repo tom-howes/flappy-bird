@@ -2,30 +2,41 @@ import json
 import shutil
 import pygame
 
+# Current score json file
 score_file = "scores/leaderboard_current.json"
+
+# Empty template for score json file
 score_template = "scores/leaderboard_template.json"
 
 class Leaderboard():
     
     def __init__(self, score_file, player_name):
+        """ Initiates new leaderboard based on score json file and input player name
+        """
         self.player = player_name
         self.leaderboard = self.load_leaderboard(score_file)
     
-    # Prompts the user to input their name
-    def get_player(self):
-        player = input("Enter your name: ")
-        return player
-    
-    # Loads the leaderboard from json file 
+
+    def set_player(self, name):
+        """ Updates player name
+        """
+        self.player = name
+     
     def load_leaderboard(self, score_file):
+        """ Loads the leaderboard from json file
+        """
         with open(score_file, 'r') as file:
             return json.load(file)
     
-    # Function to blit leaderboard onto screen
+    
     def get_leaderboard(self):
+        """ Returns dict of player names / scores
+        """
         return self.leaderboard['players']
-    # Adds current player and score to leaderboard if it is higher than some existing score
+    # 
     def add_current_score(self, score):
+        """ Adds current player and score to leaderboard if it is higher than some existing score
+        """
         # Skip if no score
         if score == 0:
             return
@@ -44,14 +55,15 @@ class Leaderboard():
             leaders.append(player_score)
         self.leaderboard['players'] = leaders[:5]
 
-    # Function to update leaderboard with current player score
     def update(self):
+        """ Function to update score file with current player score
+        """
 
         with open(score_file, 'w') as file:
             json.dump(self.leaderboard, file)
 
-
-    # Function to reset leaderboard to template
     def reset(self):
+        """ Function to reset leaderboard to template
+        """
         shutil.copyfile(score_template, score_file)
         self.load_leaderboard(score_file)

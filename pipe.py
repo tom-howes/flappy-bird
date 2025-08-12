@@ -1,22 +1,25 @@
 import pygame
 import random
-
 MAX_HEIGHT = 100
 START_VELOCITY = 5
-WINDOW_HEIGHT = 499
 
 class Pipe():
 
     def __init__(self, x, score):
+        """ Initialises a pipe object with a random height
+        """
         self.x = x
 
         self.top = 0
         pipe_image = pygame.image.load("images/new_pipe_biggest.png").convert_alpha()
         
+        # Top pipe is flipped bottom pipe
         self.top_pipe = pygame.transform.flip(pipe_image, False, True)
         self.bottom_pipe = pipe_image
-
+        from flappy import WINDOW_HEIGHT
         self.bottom = WINDOW_HEIGHT - pipe_image.get_height()
+
+        # Pipe speed increments with score in multiples of 5
         self.acceleration = (score // 5)
         self.velocity = START_VELOCITY + self.acceleration
 
@@ -25,18 +28,29 @@ class Pipe():
         self.random_height()
 
     def random_height(self):
+        """ Randomises height of top and bottom pipes between
+            0 -- largest gap
+            100 -- smallest gap
+        """
         self.top -= random.randrange(0, MAX_HEIGHT)
         self.bottom += random.randrange(0, MAX_HEIGHT)
 
     def move(self):
+        """ increments pipe x value by current velocity
+        """
         self.x -= self.velocity
 
     def draw(self, window):
+        """ blits pipes on window
+        """
         window.blit(self.top_pipe, (self.x, self.top))
         window.blit(self.bottom_pipe, (self.x, self.bottom))
     
-    def collision(self, bird, window):
-
+    def collision(self, bird):
+        """ Checks if bird overlaps with bottom pipe or top pipe
+            bird -- bird object
+            If masks overlap collision occurs - Return True
+        """
         bird_mask = bird.get_mask()
         top_mask = pygame.mask.from_surface(self.top_pipe)
         bottom_mask = pygame.mask.from_surface(self.bottom_pipe)
@@ -53,8 +67,12 @@ class Pipe():
         return False
     
     def print_pos(self):
+        """ Used for debugging
+        """
         print("x: ", self.x)
     
     def stop(self):
+        """ Invoked when collision has occurred for bird falling animation
+        """
         self.velocity = 0
         self.acceleration = 0
