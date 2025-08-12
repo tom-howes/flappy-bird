@@ -5,6 +5,8 @@ powerup_images = [
     'images/slow.png'
 ]
 
+TIMER = 160 # 5 seconds
+
 class Powerup(pygame.sprite.Sprite):
 
     def __init__(self, pipes):
@@ -59,4 +61,4 @@ class Powerup(pygame.sprite.Sprite):
     def activate(self):
         """ Activates powerup and returns timer for powerup activation period
         """
-        return 100, self.type
+        return TIMER, self.type

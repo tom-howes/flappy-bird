@@ -55,6 +55,11 @@ Refactored into main function and added a home button to game over screen that c
 
 Bug where leaderboard is not resetting from leaderboard screen until home button clicked
 
+Added a Powerup class that blits powerups on the screen, gives them a hovering effect and activates them for various effects on game loop.
+Powerups spawn approximately once every 400 frames (12.5s) but it is random so could be more/less frequent.
+
+First powerup is a slow that reduces pipe speed for a given time period (currently 5 seconds)
+
 Next steps:
      - Add animations to bird (flapping wings (done), tilt up/down (done), flop on death (done))
      - Add start (done) and finish (game over) animation (done)
