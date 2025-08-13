@@ -10,6 +10,15 @@ birdimages = [
 # Max speed bird can fall per frame
 MAX_VELOCITY = 6
 
+def blit_alpha(target, source, location, opacity):
+    x = location[0]
+    y = location[1]
+    temp = pygame.Surface((source.get_width(), source.get_height())).convert()
+    temp.blit(target, (-x, -y))
+    temp.blit(source, (0, 0))
+    temp.set_alpha(opacity)
+    target.blit(temp, location)
+
 class Bird(pygame.sprite.Sprite):
     """ Bird class
 
@@ -25,18 +34,17 @@ class Bird(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(birdimages[1])
         self.mask = pygame.mask.from_surface(self.image)
-
         self.x = horizontal
         self.y = vertical
         self.velocity = MAX_VELOCITY
         self.height = self.y
         self.flapped = False
         self.asleep = False
-    
+
     def draw(self, window):
         """ Draws bird, taking into account current bird velocity and awake status
 
-        """  
+        """
         self.image = self.get_image()
         
         # Flips upside down if bird is asleep
@@ -48,7 +56,8 @@ class Bird(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(self.image, -25)
         else:
             self.image = pygame.transform.rotate(self.image, round(-3.5 * self.velocity, 1))
-        window.blit(self.image, (self.x, self.y))
+        blit_alpha(window, self.image, (self.x, self.y), 128)
+        # window.blit(self.image, (self.x, self.y))
     
     def get_image(self):
         """ Returns bird image with wings up or down based on flap / awake status

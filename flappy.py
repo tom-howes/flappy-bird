@@ -83,7 +83,6 @@ home_button_rect = home_button.get_rect()
 home_button_rect.x, home_button_rect.y = back_button_rect.x, (WINDOW_HEIGHT - home_button.get_height())
 
 
-
 def draw_game_state(bird, pipes, powerups, score):
     """ Blits each frame of ongoing game to window
 
