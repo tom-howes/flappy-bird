@@ -11,6 +11,12 @@ birdimages = [
 MAX_VELOCITY = 6
 
 def blit_alpha(target, source, location, opacity):
+    """ Cool trick to blit transparent image over pygame surface
+        target -- background to be blit over
+        source -- image to blit
+        location -- x, y coordinates (tuple)
+        opacity -- transparency (0 = transparent to 255 = opaque)
+    """
     x = location[0]
     y = location[1]
     temp = pygame.Surface((source.get_width(), source.get_height())).convert()
@@ -40,8 +46,9 @@ class Bird(pygame.sprite.Sprite):
         self.height = self.y
         self.flapped = False
         self.asleep = False
+        self.invulnerable = False
 
-    def draw(self, window):
+    def draw(self, window, invulnerable):
         """ Draws bird, taking into account current bird velocity and awake status
 
         """
@@ -56,8 +63,10 @@ class Bird(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(self.image, -25)
         else:
             self.image = pygame.transform.rotate(self.image, round(-3.5 * self.velocity, 1))
-        blit_alpha(window, self.image, (self.x, self.y), 128)
-        # window.blit(self.image, (self.x, self.y))
+        if self.invulnerable:
+            blit_alpha(window, self.image, (self.x, self.y), 128)
+        else:
+            window.blit(self.image, (self.x, self.y))
     
     def get_image(self):
         """ Returns bird image with wings up or down based on flap / awake status
@@ -120,4 +129,10 @@ class Bird(pygame.sprite.Sprite):
         if self.mask.overlap(powerup.mask, offset):
             print("got powerup!")
             return True
+        
+    def make_invulnerable(self):
+        self.invulnerable = True
+    
+    def remove_invulnerable(self):
+        self.invulnerable = False
         

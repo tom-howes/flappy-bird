@@ -27,7 +27,7 @@ class Powerup(pygame.sprite.Sprite):
         self.y = random.randint(height + 30, WINDOW_HEIGHT - height - 30)
         self.up = True
         
-        # Determines type of powerup
+        # Determines type of powerup and target of powerup
         self.type = powerup_images[img_num].removeprefix("images/").removesuffix(".png")
 
         # Avoid pipe collision
@@ -41,7 +41,7 @@ class Powerup(pygame.sprite.Sprite):
     def get_mask(self):
         return pygame.mask.from_surface(self.image)
 
-    def move(self, velocity):
+    def move(self, velocity, slowed):
         """ Moves powerup icon
             velocity -- current velocity of the pipes
         """
@@ -56,9 +56,19 @@ class Powerup(pygame.sprite.Sprite):
                 self.up = True
 
         # Moves icon x coord at current speed of pipes
-        self.x -= velocity
+        if slowed:
+            self.x -= (velocity * 0.8)
+        else:
+            self.x -= velocity
     
     def activate(self):
         """ Activates powerup and returns timer for powerup activation period
         """
-        return TIMER, self.type
+        return TIMER
+    
+    def deactivate(self, objects):
+        if self.type == "slow":
+            for pipe in objects[0]:
+                pipe.speed_up()
+        if self.type == "invulnerable":
+            objects[1].remove_invulerable()

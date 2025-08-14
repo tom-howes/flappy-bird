@@ -83,7 +83,7 @@ home_button_rect = home_button.get_rect()
 home_button_rect.x, home_button_rect.y = back_button_rect.x, (WINDOW_HEIGHT - home_button.get_height())
 
 
-def draw_game_state(bird, pipes, powerups, score):
+def draw_game_state(bird, pipes, powerups, score, invulnerable):
     """ Blits each frame of ongoing game to window
 
         bird -- bird object
@@ -98,7 +98,7 @@ def draw_game_state(bird, pipes, powerups, score):
     for powerup in powerups:
         powerup.draw(window)
     
-    bird.draw(window)
+    bird.draw(window, invulnerable)
 
     # Fetching digits of score
     numbers = [int(x) for x in list(str(score))]
@@ -248,7 +248,7 @@ def sleep_animation(bird, pipes, score):
         pipe.stop()
         pipe.draw(window)
     bird.fall()
-    bird.draw(window)
+    bird.draw(window, False)
 
     # Fetching digits of score
     numbers = [int(x) for x in list(str(score))]
@@ -283,10 +283,10 @@ def flappygame(leaderboard):
     pipes = [Pipe(WINDOW_WIDTH, score, False)]
     bird = Bird(horizontal, vertical)
 
-    # Array of powerups on screen
+    # Array of powerups w/ icons displayed on screen
     powerups = []
 
-    # Dict of active powerups
+    # Dict of active powerups acter pick up
     active = {}
 
     while True:
@@ -307,19 +307,25 @@ def flappygame(leaderboard):
             powerups.append(powerup)
 
         # Init powerup buffs
+        invulnerable = False
         slowed = False
 
         # Check powerup type and timer status
-        for type in active:
+        for powerup in active:
             # Decrement timer
-            active[type] -= 1
-            if type == "slow":
+            active[powerup] -= 1
+            if powerup.type == "slow":
                 slowed = True
+            if powerup.type == "invulnerable":
+                invulnerable = True
             # If timer reaches 0, remove powerup
-            if active[type] == 0:
-                active.pop(type)
+            if active[powerup] == 0:
+                powerup.deactivate([pipes, bird])    
+                active.pop(powerup)
                 break
-                    
+
+        if slowed == True:
+                map(lambda x : x.slow_down(), pipes)
     
         for pipe in pipes:
             print(pipe.velocity)
@@ -346,15 +352,15 @@ def flappygame(leaderboard):
         # If bird collects (collides with) powerup, activate powerup on a timer and remove from screen
         for powerup in powerups:
             if bird.check_powerup(powerup):
-                timer, type = powerup.activate()
-                active[type] = timer
+                timer = powerup.activate()
+                active[powerup] = timer
                 powerups.remove(powerup)
             else:
-                powerup.move(pipes[-1].velocity)
+                powerup.move(pipes[-1].velocity, slowed)
         
              
         # Blits current image / score status to screen
-        draw_game_state(bird, pipes, powerups, score) 
+        draw_game_state(bird, pipes, powerups, score, invulnerable) 
 
         
         # Refreshing game window and displaying the score

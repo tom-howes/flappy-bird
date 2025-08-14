@@ -24,8 +24,7 @@ class Pipe():
         self.velocity = START_VELOCITY + self.acceleration
 
         # Check for slow powerup, reduce velocity
-        if slowed == True:
-            self.velocity *= 0.8
+        self.slowed = slowed
 
         self.passed = False
 
@@ -42,7 +41,10 @@ class Pipe():
     def move(self):
         """ increments pipe x value by current velocity
         """
-        self.x -= self.velocity
+        if self.slowed:
+            self.x -= (self.velocity * 0.8)
+        else:
+            self.x -= self.velocity
 
     def draw(self, window):
         """ blits pipes on window
